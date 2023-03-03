@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=0">
+    <title>DOING: сегодня</title>
+    <link rel="stylesheet" href="/public/styles/style2.css">
+    <link rel="icon" href="/public/favicon.ico">
+</head>
+<body>
+    <header class="header">
+        <div class="container__wide">
+            <nav class="header__navigation">
+                <ul class="header__navigation__left">
+                    <button class="header__navigation__left__burger header__btn default">
+                        <div class="header__navigation__left__burger__line"></div>
+                        <div class="header__navigation__left__burger__line"></div>
+                        <div class="header__navigation__left__burger__line"></div>
+                    </button>
+                    <button class="header__navigation__left__home header__btn default">
+                        <a href="/public/index2.html"><img src="./images/common/home.svg" alt="home-button" width="20" height="20"></a>
+                    </button>
+                </ul>
+                <ul class="header__navigation__right">
+                    <button class="header__navigation__right__made header__btn default">
+                        <p><span class="header__navigation__right__made__header__btn__counter">0</span>/5</p>
+                        <img src="/public/images/common/check-mark.svg" alt="ckeckmark-button" width="15" height="15">
+                    </button>
+                    <button class="header__navigation__right__user header__btn default">
+                        <img src="/public/images/user-default.svg" alt="user-button" width="15" height="15">
+                    </button>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="header__right__made__popup">
+        <h2 class="header__right__made__popup__heading">Продуктивность</h2>            
+        <button class="header__right__made__popup__button__mobile">
+            <svg>
+                <path fill="currentColor" fill-rule="nonzero" d="M5.146 
+                5.146a.5.5 0 0 1 .708 0L12 11.293l6.146-6.147a.5.5 0 0 1 .638-.057l.07.057a.5.5 0 0 1 0 .708L12.707
+                12l6.147 6.146a.5.5 0 0 1 .057.638l-.057.07a.5.5 0 0 1-.708 0L12 12.707l-6.146 6.147a.5.5 0 0 1-.638.057l-.07-.057a.5.5 0
+                0 1 0-.708L11.293 12 5.146 5.854a.5.5 0 0 1-.057-.638z"></path>
+            </svg>
+        </button>
+        <div class="header__right__made__popup__list__daily active">
+            <div class="header__right__made__popup__list__daily__img__wrapper">
+                <img src="/public/images/common/cup.svg" alt="productivity cup" width="80" height="80">
+            </div>
+            <div class="header__right__made__popup__list__daily__item"></div>
+            <p class="header__right__made__popup__list__daily__paragraph">
+                Выполненных задач:<br>
+                <span class="header__right__made__popup__list__daily__paragraph__span">0/5</span>
+            </p>
+            <span class="header__right__made__popup__list__daily__span__hidden hidden">Цель достигнута!</span>
+        </div>
+            
+        </ul>
+    </div>
+
+    <div class="header__right__user__popup">
+        <button class="header__right__user__popup__button__mobile">
+            <svg>
+                <path fill="currentColor" fill-rule="nonzero" d="M5.146 
+                5.146a.5.5 0 0 1 .708 0L12 11.293l6.146-6.147a.5.5 0 0 1 .638-.057l.07.057a.5.5 0 0 1 0 .708L12.707
+                12l6.147 6.146a.5.5 0 0 1 .057.638l-.057.07a.5.5 0 0 1-.708 0L12 12.707l-6.146 6.147a.5.5 0 0 1-.638.057l-.07-.057a.5.5 0
+                0 1 0-.708L11.293 12 5.146 5.854a.5.5 0 0 1-.057-.638z"></path>
+            </svg>
+        </button>
+        <div class="header__right__user__popup__top">
+            <img src="/public/images/user-default.svg" alt="user-icon" class="header__right__user__popup__icon" width="50" height="50">
+            <h2 class="header__right__user__popup__top__heading">Имя пользователя</h2>
+        </div>
+        <ul class="header__right__user__popup__list">
+            <li class="header__right__user__popup__list__item settings">
+                <a href="#!" class="header__right__user__popup__list__item__settings__link">Настройки</a>
+            </li>
+
+            <li class="header__right__user__popup__list__item mains__bar">
+                <a href="#!" class="header__right__user__popup__list__item__mains__link">Основные</a>
+            </li>
+
+            <li class="header__right__user__popup__list__item themes__bar">
+                <a href="#!" class="header__right__user__popup__list__item__themes__link">Темы</a>
+            </li>
+
+            <li class="header__right__user__popup__list__item productivity__bar">
+                <a href="#!" class="header__right__user__popup__list__item__productivity__link">Продуктивность</a>
+            </li>
+
+            <li class="header__right__user__popup__list__item notifications__bar">
+                <a href="#!" class="header__right__user__popup__list__item__notifications__link">Уведомления</a>
+            </li>
+
+            <li class="header__right__user__popup__list__item sign-out">
+                <a href="#!" class="header__right__user__popup__list__item__sign-out__link">Выйти</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="header__right__user__settings__popup">
+        <div class="header__right__user__settings__popup__content">
+            <div class="header__right__user__settings__popup__content__left">
+                <h2 class="header__right__user__settings__popup__content__left__top__heading">Настройки</h2>
+                <ul class="header__right__user__settings__popup__content__left__list">
+                    <li class="header__right__user__settings__popup__content__left__list__item ">
+                        <a href="#!" class="header__right__user__settings__popup__content__left__list__item__link user-account active">Аккаунт</a>
+                    </li>
+                    <li class="header__right__user__settings__popup__content__left__list__item">
+                        <a href="#!" class="header__right__user__settings__popup__content__left__list__item__link user-main">Основные</a>
+                    </li>
+                    <li class="header__right__user__settings__popup__content__left__list__item">
+                        <a href="#!" class="header__right__user__settings__popup__content__left__list__item__link user-subscription">Подписка</a>
+                    </li>
+                    <li class="header__right__user__settings__popup__content__left__list__item">
+                        <a href="#!" class="header__right__user__settings__popup__content__left__list__item__link user-theme">Тема</a>
+                    </li>
+                    <li class="header__right__user__settings__popup__content__left__list__item">
+                        <a href="#!" class="header__right__user__settings__popup__content__left__list__item__link user-productivity">Продуктивность</a>
+                    </li>
+                    <li class="header__right__user__settings__popup__content__left__list__item">
+                        <a href="#!" class="header__right__user__settings__popup__content__left__list__item__link user-notifications">Уведомления</a>
+                    </li>
+                </ul>
+                <button class="header__right__user__settings__popup__content__right__button__mobile">
+                    <svg>
+                        <path fill="currentColor" fill-rule="nonzero" d="M5.146 
+                        5.146a.5.5 0 0 1 .708 0L12 11.293l6.146-6.147a.5.5 0 0 1 .638-.057l.07.057a.5.5 0 0 1 0 .708L12.707
+                        12l6.147 6.146a.5.5 0 0 1 .057.638l-.057.07a.5.5 0 0 1-.708 0L12 12.707l-6.146 6.147a.5.5 0 0 1-.638.057l-.07-.057a.5.5 0
+                        0 1 0-.708L11.293 12 5.146 5.854a.5.5 0 0 1-.057-.638z"></path>
+                    </svg>
+                </button>
+            </div>
+                <div class="header__right__user__settings__popup__content__right">
+                    <button class="header__right__user__settings__popup__content__right__button">
+                        <svg>
+                            <path fill="currentColor" fill-rule="nonzero" d="M5.146 
+                            5.146a.5.5 0 0 1 .708 0L12 11.293l6.146-6.147a.5.5 0 0 1 .638-.057l.07.057a.5.5 0 0 1 0 .708L12.707
+                            12l6.147 6.146a.5.5 0 0 1 .057.638l-.057.07a.5.5 0 0 1-.708 0L12 12.707l-6.146 6.147a.5.5 0 0 1-.638.057l-.07-.057a.5.5 0
+                            0 1 0-.708L11.293 12 5.146 5.854a.5.5 0 0 1-.057-.638z"></path>
+                        </svg>
+                    </button>
+                    <button class="header__navigation__left__burger__settings header__btn">
+                        <div class="header__navigation__left__burger__line__settings"></div>
+                        <div class="header__navigation__left__burger__line__settings"></div>
+                        <div class="header__navigation__left__burger__line__settings"></div>
+                    </button>
+
+                <div class="header__right__user__settings__popup__content__right__account active">
+                    <h2 class="header__right__user__settings__popup__content__right__account__heading">Аккаунт</h2>
+                    <div class="header__right__user__settings__popup__content__right__account__photo">
+                        <p class="header__right__user__settings__popup__content__right__account__photo__paragraph">Фото</p>
+                        <div class="header__right__user__settings__popup__content__right__account__photo__lower">
+                            <img src="/public/images/user-default.svg" alt="user-avatar" width="50" height="50">
+                            <button class="header__right__user__settings__popup__content__right__account__photo__lower__button">Загрузить фото</button>
+                        </div>
+                    </div>
+                    <div class="header__right__user__settings__popup__content__right__account__name">
+                        <p class="header__right__user__settings__popup__content__right__account__name__paragraph">Имя</p>
+                        <input type="text" class="header__right__user__settings__popup__content__right__account__name__input">
+                    </div>
+                    <div class="header__right__user__settings__popup__content__right__account__email">
+                        <p class="header__right__user__settings__popup__content__right__account__user__email">Sanya_harosh@gmail.com</p>
+                        <button class="header__right__user__settings__popup__content__right__account__change__email">Изменить Email</button>
+                    </div>
+                </div>
+
+                <div class="header__right__user__settings__popup__content__right__main">
+                    <h2 class="header__right__user__settings__popup__content__right__main__heading">Основное</h2>
+                    <div class="header__right__user__settings__popup__content__right__main__language">
+                        <p class="header__right__user__settings__popup__content__right__main__language__paragraph">Язык</p>
+                        <select class="header__right__user__settings__popup__content__rigth__main__langugae__select">
+                            <option>Русский (Russian)</option>
+                            <option>English</option>
+                        </select>
+                    </div>
+                    <h2 class="header__right__user__settings__popup__content__right__main__heading__second">Дата и время</h2>
+                    <div class="header__right__user__settings__popup__content__right__main__hours">
+                        <p class="header__right__user__settings__popup__content__right__main__hours__paragraph">Часовой пояс</p>
+                        <select class="header__right__user__settings__popup__content__right__main__hours__select">
+                            <option>GMT -12:00</option>
+                            <option>GMT -11:00</option>
+                            <option>GMT -10:00</option>
+                            <option>GMT -9:00</option>
+                            <option>GMT -8:00</option>
+                            <option>GMT -7:00</option>
+                            <option>GMT -6:00</option>
+                            <option>GMT -5:00</option>
+                            <option>GMT -4:00</option>
+                            <option>GMT -3:00</option>
+                            <option>GMT -2:00</option>
+                            <option>GMT -1:00</option>
+                            <option>GMT</option>
+                            <option>GMT + 1:00</option>
+                            <option>GMT + 2:00</option>
+                            <option>GMT + 3:00</option>
+                            <option>GMT + 4:00</option>
+                            <option>GMT + 5:00</option>
+                            <option>GMT + 6:00</option>
+                            <option>GMT + 7:00</option>
+                            <option>GMT + 8:00</option>
+                            <option>GMT + 9:00</option>
+                            <option>GMT + 10:00</option>
+                            <option>GMT + 11:00</option>
+                            <option>GMT + 12:00</option>
+                            <option>GMT + 13:00</option>
+                        </select>
+                    </div>
+                    <div class="header__right__user__settings__popup__content__right__main__hours__format">
+                        <p class="header__right__user__settings__popup__content__right__main__hours__format__paragraph">Формат времени</p>
+                        <select class="header__right__user__settings__popup__content__right__main__hours__format__select">
+                            <option>13:00</option>
+                            <option>1pm</option>
+                        </select>
+                    </div>
+                    <div class="header__right__user__settings__popup__content__right__main__date__format">
+                        <p class="header__right__user__settings__popup__content__right__main__date__format__paragraph">Формат времени</p>
+                        <select class="header__right__user__settings__popup__content__right__main__date__format__select">
+                            <option>DD-MM-YYYY</option>
+                            <option>MM-DD-YYYY</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="header__right__user__settings__popup__content__right__subscription">
+                    <h2 class="header__right__user__settings__popup__content__right__subscription__heading">Подписка</h2>
+                </div>
+
+                <div class="header__right__user__settings__popup__content__right__themes">
+                    <h2 class="header__right__user__settings__popup__content__right__themes__heading">Темы</h2>
+                    <div class="header__right__user__settings__popup__content__right__themes__all">
+                        <div class="header__right__user__settings__popup__content__right__themes__theme default__theme active">
+                            <button class="header__right__user__settings__popup__content__right__themes__theme__button default__btn">
+                                <img src="/public/images/page-2/theme-1.svg" alt="theme-1" width="150" height="50">
+                            </button>
+                            <p class="header__right__user__settings__popup__content__right__themes__theme__paragraph">Стандартная</p>
+                        </div>
+                        <div class="header__right__user__settings__popup__content__right__themes__theme green__theme">
+                            <button class="header__right__user__settings__popup__content__right__themes__theme__button green__btn">
+                                <img src="/public/images/page-2/theme-2.svg" alt="theme-2" width="150" height="50">
+                            </button>
+                            <p class="header__right__user__settings__popup__content__right__themes__theme__paragraph">Зеленая</p>
+                        </div>
+                        <div class="header__right__user__settings__popup__content__right__themes__theme emerald__theme">
+                            <button class="header__right__user__settings__popup__content__right__themes__theme__button emerald__btn">
+                                <img src="/public/images/page-2/theme-3.svg" alt="theme-3" width="150" height="50">
+                            </button>
+                            <p class="header__right__user__settings__popup__content__right__themes__theme__paragraph">Изумрудная</p>
+                        </div>
+                        <div class="header__right__user__settings__popup__content__right__themes__theme purple__theme">
+                            <button class="header__right__user__settings__popup__content__right__themes__theme__button purple__btn">
+                                <img src="/public/images/page-2/theme-4.svg" alt="theme-4" width="150" height="50">
+                            </button>
+                            <p class="header__right__user__settings__popup__content__right__themes__theme__paragraph">Фиолетовая</p>
+                        </div>
+                        <div class="header__right__user__settings__popup__content__right__themes__theme brown__theme">
+                            <button class="header__right__user__settings__popup__content__right__themes__theme__button brown__btn">
+                                <img src="/public/images/page-2/theme-5.svg" alt="theme-5" width="150" height="50">
+                            </button>
+                            <p class="header__right__user__settings__popup__content__right__themes__theme__paragraph">Коричневая</p>
+                        </div>
+                        <div class="header__right__user__settings__popup__content__right__themes__theme black__theme">
+                            <button class="header__right__user__settings__popup__content__right__themes__theme__button black__btn">
+                                <img src="/public/images/page-2/theme-6.svg" alt="theme-6" width="150" height="50">
+                            </button>
+                            <p class="header__right__user__settings__popup__content__right__themes__theme__paragraph">Черная</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="header__right__user__settings__popup__content__right__productivity">
+                    <h2 class="header__right__user__settings__popup__content__right__productivity__heading">Продуктивность</h2>
+
+                     <div class="header__right__user__settings__popup__content__right__productivity__content">
+                        <canvas id="myChart"></canvas>
+                     </div>
+                </div>
+
+                <div class="header__right__user__settings__popup__content__right__notifications">
+                    <h2 class="header__right__user__settings__popup__content__right__notifications__heading">Уведомления</h2>
+                    <form class="header__right__user__settings__popup__content__right__notifications__form">
+                        <div class="header__right__user__settings__popup__content__right__notifications__form__first">
+                            <label for="notofications-input-one">Email<sup>*</sup></label>
+                            <input type="email" id="notofications-input-one" class="header__right__user__settings__popup__content__right__notifications__input notifications-first" required autocomplete="off">
+                        </div>
+                        <div class="header__right__user__settings__popup__content__right__notifications__form__second">   
+                            <label for="notofications-input-second">Дополнительный Email</label>
+                            <input type="email" id="notofications-input-second" class="header__right__user__settings__popup__content__right__notifications__input notifications-second" autocomplete="off">
+                        </div>
+                        <div class="header__right__user__settings__popup__content__right__notifications__form__third">
+                            <button class="header__right__user__settings__popup__content__right__notofications__button btn">
+                                <span class="button-ball"></span>
+                            </button>
+                            <span class="is-notifications-on">Уведомления выключены</span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header__left__bar">
+        <div class="header__left__bar__content">
+            <ul class="header__left__bar__content__list">
+                <li class="header__left__bar__content__list__item">
+                   <a class="header__left__bar__content__list__item__link left__bar__all__tasks active"  href="#!">Все задачи</a>
+                   <span class="header__left__bar__content__list__item__span left__bar__all__tasks__span">0</span>
+                </li>
+                <li class="header__left__bar__content__list__item">
+                    <a class="header__left__bar__content__list__item__link left__bar__important__link" href="#!">Важные</a>
+                    <span class="header__left__bar__content__list__item__span left__bar__important__link__span">0</span>
+                </li>
+                <li class="header__left__bar__content__list__item">
+                    <a class="header__left__bar__content__list__item__link left__bar__non__important__link" href="#!">Неважные</a>
+                    <span class="header__left__bar__content__list__item__span left__bar__non__important__link__span">0</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="productivity-tip">
+        <p class="productivity-tip__paragraph">Отслеживайте Вашу продуктивность
+            <sup>*</sup>расширенная статистика находится в настройки --> продуктивность
+        </p>
+        <button class="productivity-tip__close-button">
+            <svg>
+                <path fill="#fff" fill-rule="nonzero" d="M5.146 
+                5.146a.5.5 0 0 1 .708 0L12 11.293l6.146-6.147a.5.5 0 0 1 .638-.057l.07.057a.5.5 0 0 1 0 .708L12.707
+                12l6.147 6.146a.5.5 0 0 1 .057.638l-.057.07a.5.5 0 0 1-.708 0L12 12.707l-6.146 6.147a.5.5 0 0 1-.638.057l-.07-.057a.5.5 0
+                0 1 0-.708L11.293 12 5.146 5.854a.5.5 0 0 1-.057-.638z"></path>
+            </svg>
+        </button>
+    </div>
+
+    <div class="purpose-done">
+        <p>Цель на сегодня достигнута!</p>
+        <button class="purpose-done__close-button">
+            <svg>
+                <path fill="#fff" fill-rule="nonzero" d="M5.146 
+                5.146a.5.5 0 0 1 .708 0L12 11.293l6.146-6.147a.5.5 0 0 1 .638-.057l.07.057a.5.5 0 0 1 0 .708L12.707
+                12l6.147 6.146a.5.5 0 0 1 .057.638l-.057.07a.5.5 0 0 1-.708 0L12 12.707l-6.146 6.147a.5.5 0 0 1-.638.057l-.07-.057a.5.5 0
+                0 1 0-.708L11.293 12 5.146 5.854a.5.5 0 0 1-.057-.638z"></path>
+            </svg>
+        </button>
+    </div>
+
+    <main class="main">
+        <section class="main__view">
+            <div class="container">
+                <div class="main__view__content">
+                    <div class="main__view__content__top">
+                        <h2 class="main__view__content__heading">Все задачи выполнены!<br class="break__row__content__heading"></h2>
+                        <span class="main__view__content__heading__span"></span>
+                    </div>
+                    <ul class="main__view__content__list">
+                        
+                    </ul>
+                    <form class="main__view__content__form">
+                        <textarea class="main__view__content__form__task__description" maxlength="350" placeholder="Название задачи"></textarea>
+                        <textarea class="main__view__content__form__task__sub__description" placeholder="Описание" maxlength="500"></textarea>
+                        <button class="main__view__content__form__button__clean">Очистить</button>
+                        <button class="main__view__content__form__button__add">Добавить задачу</button>  
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <audio class="done-sound" src="/public/Untitled.mp3"></audio>
+
+    <template class="main__tasks__template">
+        <li class="main__view__content__list__item item">
+            <span class="main__view__content__list__item__span__desc"></span>
+            <span class="main__view__content__list__item__span__sub__desc"></span>
+            <button class="main__view__content__list__item__button__done" type="button"></button>
+            <i class="fas fa-bars"></i>
+            <div class="maiv__view__content__list__item__bottom__bar">
+                <button class="main__view__content__form__important"></button>
+                <button class="main__view__content__form__edit__button"></button>   
+            </div>
+        </li>
+    </template>
+
+    <template class="main__tasks__template__date">
+        <li class="main__view__content__list__item__date">
+            <p class="main__view__content__list__item__paragraph__date"></p>
+        </li>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="/public/js/js2.js"></script>
+</body>
+</html>

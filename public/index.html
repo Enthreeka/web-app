@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOING</title>
+    <link rel="stylesheet" href="/public/styles/style1.css">
+    <link rel="icon" href="/public/favicon.ico">
+        <link rel="stylesheet" href="./https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+</head>
+<body>
+    <header class="header">
+        <div class="container__wide">
+            <nav class="header__navigation">
+                <ul class="header__navigation__right">
+                    <button class="header__navigation__left__burger header__btn default">
+                        <div class="header__navigation__left__burger__line"></div>
+                        <div class="header__navigation__left__burger__line"></div>
+                        <div class="header__navigation__left__burger__line"></div>
+                    </button>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="left-pannel__popup">
+        <div class="left-pannel__popup__content">
+            <ul class="left-pannel__popup__content__list">
+                <li class="left-pannel__popup__content__list-item">
+                    <a href="#about">О нас</a>
+                </li>
+                <li class="left-pannel__popup__content__list-item">
+                    <a href="#how">Что с этим делать?</a>
+                </li>
+                <li class="left-pannel__popup__content__list-item">
+                    <a href="#sign">Регистрация</a>
+                </li>
+                <li class="left-pannel__popup__content__list-item">
+                    <a href="#log">Вход</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <main class="main">
+        <section class="about" id="about">
+            <div class="container">
+                <div class="about__content">
+                    <div class="about__content__left__col">
+                        <div class="about__content__left__col__img__wrapper animate__fadeInLeft animate__animated animate__fast">
+                            <img src="/public/images/page-1/todo-logo.svg" alt="todo" width="400" height="400">
+                        </div> 
+                    </div>
+                    <div class="about__content__right__col animate__fadeInRight animate__animated">
+                        <div class="about__content__right__col__text ">
+                            <h2>О нас</h2>
+                            <p><span class="span__for__brand">IN DOING</span> - приложение для организации Вашей жизни</p>
+                        </div>
+                        <a class="about__content__right__col__btn btn" href="#how">Понятно!</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="how" id="how">
+            <div class="container">
+                <div class="how__content">
+                    <img src="/public/images/page-1/todo-img.svg" alt="how" width="300" height="auto" class="mobile__image">
+                    <div class="how__content__left__col">
+                        <div class="how__content__left__col__text">
+                            <h2>Что с этим делать?</h2>
+                            <p>
+                                <b>-Записывайте</b> задачи<br>
+                                <b>-Отслеживайте</b> свою продуктивность<br>
+                                <b>-Подстраивайте</b> приложение под себя<br>
+                                <b>-Увеличивайте</b> свою производительность
+                            </p>
+                        </div>
+                        <a class="how__content__left__col__btn btn" href="#sign">Понятно!</a>
+                    </div>
+                    <div class="how__content__right__col">
+                        <div class="how__content__right__col__img__wrapper">
+                            <img src="/public/images/page-1/todo-img.svg" alt="todo" width="400" height="600">
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </section>
+    
+
+        <section class="sign" id="sign">
+            <div class="container">
+                <div class="sign__content">
+                    <div class="sign__content__left__col">
+                        <div class="sign__content__left__col__img__wrapper">
+                            <img src="/public/images/page-1/Frame 12.svg" alt="themes" width="400" height="auto">
+                        </div> 
+                    </div>
+                    <div class="sign__content__right__col">
+                        <h2 class="sign__content__right__col__heading">Регистрация</h2>
+                        <form class="sign__content__right__col__form">
+                            <div class="group">      
+                                <input type="text" required>
+                                <span class="highlight"></span>
+                                <span class="bar"></span>
+                                <label>Имя</label>
+                                </div>
+                                
+                                <div class="group">      
+                                <input type="text" required>
+                                <span class="highlight"></span>
+                                <span class="bar"></span>
+                                <label>Email</label>
+                            </div>
+                            <button class="sign__submit__button btn">Зарегистрироваться</button>
+                        </form>
+                        <p class="sign__content__right__col__paragraph">Уже зарегестрированы? <br> <a href="#log">Войти</a></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="log" id="log">
+            <div class="container">
+                <div class="log__content">
+                    <div class="log__content__left__col">
+                        <h2 class="log__content__left__col__heading">Вход</h2>
+                        <form class="log__content__left__col__form">
+                            <div class="group">      
+                                <input type="text" required>
+                                <span class="highlight"></span>
+                                <span class="bar"></span>
+                                <label>Имя</label>
+                                </div>
+                                
+                                <div class="group">      
+                                <input type="text" required>
+                                <span class="highlight"></span>
+                                <span class="bar"></span>
+                                <label>Email</label>
+                            </div>
+                            <button class="log__submit__button btn">Войти</button>
+                        </form>
+                    </div>
+                    <div class="log__content__right__col">
+                        <div class="log__content__right__col__img__wrapper">
+                            <img src="/public/images/page-1/pie-chart-svgrepo-com.svg" alt="">
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="footer none">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__content__logo">
+                    <a href="#!">
+                        <img src="/public/images/page-1/todo-logo.svg" alt="logo" width="80" height="80">
+                    </a>
+                </div>
+                <ul class="footer__content__socials">
+                    <li class="footer__content__socials__item">
+                        <a href="#!">
+                            <img src="/public/images/common/github-logo.svg" alt="github" width="30" height="30">
+                        </a>
+                    </li>
+                    <li class="footer__content__socials__item">
+                        <a href="#!">
+                            <img src="/public/images/common/telegram-logo.svg" alt="telegram" width="30" height="30">
+                        </a>
+                    </li>
+                </ul>
+                <div class="footer__content__mail">
+                    <a href="#!">
+                        <img src="/public/images/common/mail-logo.svg" alt="mail" width="30" height="30">
+                    </a>
+                    <p>Let's make something special!</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="/public/js/js1.js"></script>
+</body>
+</html>
