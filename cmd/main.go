@@ -9,8 +9,9 @@ import (
 	"net/http"
 	"time"
 	"web/internal/config"
-	"web/internal/user"
 	db2 "web/internal/user/db"
+	http2 "web/internal/user/delivery/http"
+	"web/internal/user/usecase"
 	"web/pkg/postgresql"
 )
 
@@ -25,11 +26,11 @@ func main() {
 
 	userRepository := db2.NewUserRepository(db)
 
-	service := user.NewService(userRepository)
+	service := usecase.NewService(userRepository)
 
 	router := httprouter.New()
 
-	handler := user.NewHandler(service)
+	handler := http2.NewHandler(service)
 	handler.Register(router)
 
 	//user := &entity.User{

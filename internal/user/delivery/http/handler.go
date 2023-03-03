@@ -1,4 +1,4 @@
-package user
+package http
 
 import (
 	"encoding/json"
@@ -9,10 +9,11 @@ import (
 	"path/filepath"
 	"web/internal/entity"
 	"web/internal/handlers"
+	"web/internal/user/usecase"
 )
 
 type handler struct {
-	service *Service
+	service *usecase.Service
 }
 
 const (
@@ -24,7 +25,7 @@ const (
 	login       = "/login"
 )
 
-func NewHandler(service *Service) handlers.Handler {
+func NewHandler(service *usecase.Service) handlers.Handler {
 	return &handler{service: service}
 }
 
@@ -32,18 +33,20 @@ func (h *handler) Register(router *httprouter.Router) {
 
 	router.ServeFiles("/public/*filepath", http.Dir("public"))
 
-	//router.GET(startPage, h.StartPage)
+	router.GET(startPage, h.StartPage)
 	router.GET(mainPage, h.MainPage)
 	router.GET(users, h.GetUsers)
 	router.POST(usersCreate, h.CreateUser)
-	router.GET(login, h.StartPage)
+	//	router.GET(login, h.StartPage)
 	//router.PUT(usersId, h.UpdateDataUser)
 	//router.PATCH(usersId, h.PartialUpdateDataUser)
 	//router.DELETE(usersId, h.DeleteUser)
 }
 
 func (h *handler) GetUsers(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	w.Header().Set("Content-Type", "application/json")
 	all, err := h.service.GetAll(r.Context())
+
 	if err != nil {
 		w.WriteHeader(400)
 		return
@@ -59,6 +62,7 @@ func (h *handler) GetUsers(w http.ResponseWriter, r *http.Request, p httprouter.
 }
 
 func (h *handler) CreateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	w.Header().Set("Content-Type", "application/json")
 	login := r.FormValue("login")
 	password := r.FormValue("password")
 
@@ -67,11 +71,11 @@ func (h *handler) CreateUser(w http.ResponseWriter, r *http.Request, p httproute
 		Password: password,
 	}
 
-	err := h.service.CreateUser(r.Context(), user)
-	if err != nil {
-		w.WriteHeader(404)
-		return
-	}
+	//err := h.service.CreateUser(r.Context(), user)
+	//if err != nil {
+	//	w.WriteHeader(404)
+	//	return
+	//}
 
 	allBytes, err := json.MarshalIndent(user, "", "")
 	if err != nil {
@@ -83,11 +87,13 @@ func (h *handler) CreateUser(w http.ResponseWriter, r *http.Request, p httproute
 
 }
 
-func (h *handler) GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (h *handler) LogIn(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	w.Header().Set("Content-Type", "application/json")
 	//userId, err := strconv.Atoi(strings.TrimLeft(p.ByName("userId"), ":")) <---Get user by id
 	//if err != nil {
 	//	fmt.Println(err)
 	//}
+
 	path := filepath.Join("public", "index.html")
 	tmpl, err := template.ParseFiles(path)
 	if err != nil {
@@ -110,7 +116,7 @@ func (h *handler) GetUser(w http.ResponseWriter, r *http.Request, p httprouter.P
 		Login:    users.Login,
 		Password: users.Password,
 	}
-	//
+
 	err = tmpl.ExecuteTemplate(w, "index", data)
 	if err != nil {
 		http.Error(w, err.Error(), 400)
@@ -120,20 +126,23 @@ func (h *handler) GetUser(w http.ResponseWriter, r *http.Request, p httprouter.P
 	w.WriteHeader(200)
 }
 func (h *handler) UpdateDataUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(204)
 	w.Write([]byte("update data user"))
 }
 func (h *handler) PartialUpdateDataUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(204)
 	w.Write([]byte("partial update data user"))
 }
 func (h *handler) DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(204)
 	w.Write([]byte("delete user"))
 }
 
 func (h *handler) StartPage(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	w.Header().Set("Content-Type", "text/html")
+	w.Header().Set("Content-Type", "application/json")
 
 	path := filepath.Join("public", "index.html")
 	tmpl, err := template.ParseFiles(path)
@@ -151,7 +160,7 @@ func (h *handler) StartPage(w http.ResponseWriter, r *http.Request, p httprouter
 }
 
 func (h *handler) MainPage(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	w.Header().Set("Content-Type", "text/html")
+	w.Header().Set("Content-Type", "application/json")
 
 	path := filepath.Join("public", "index2.html")
 	tmpl, err := template.ParseFiles(path)
