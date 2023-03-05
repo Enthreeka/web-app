@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"log"
 	"web/internal/entity"
 	"web/internal/user"
 )
@@ -68,7 +69,11 @@ func (r *userRepository) FindAll(ctx context.Context) ([]entity.User, error) {
 	return users, nil
 }
 
-func (r *userRepository) GetUser(ctx context.Context, login string, password string) (entity.User, error) {
+func (r *userRepository) GetUser(ctx context.Context, login string, password string) (*entity.User, error) {
+	if login == "" || password == "" {
+		log.Fatal("get empty login or password")
+	}
+
 	var user entity.User
 
 	query := `SELECT id, login, password 
@@ -78,8 +83,8 @@ func (r *userRepository) GetUser(ctx context.Context, login string, password str
 
 	err := r.db.QueryRow(ctx, query, login, password).Scan(&user.Id, &user.Login, &user.Password)
 	if err != nil {
-		return entity.User{}, err
+		return &entity.User{}, err
 	}
 
-	return user, nil
+	return &user, nil
 }

@@ -28,6 +28,12 @@ func main() {
 
 	service := usecase.NewService(userRepository)
 
+	user, err := service.LogIn(context.TODO(), "denchik", "pppp1231")
+	if err != nil {
+		return
+	}
+	fmt.Println(user)
+
 	router := httprouter.New()
 
 	handler := http2.NewHandler(service)

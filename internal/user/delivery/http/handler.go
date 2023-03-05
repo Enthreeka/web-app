@@ -104,7 +104,7 @@ func (h *handler) LogIn(w http.ResponseWriter, r *http.Request, p httprouter.Par
 	login := r.FormValue("login")
 	password := r.FormValue("password")
 
-	users, err := h.service.GetOne(r.Context(), login, password)
+	users, err := h.service.LogIn(r.Context(), login, password)
 	if err != nil {
 		w.WriteHeader(404) //TODO set new status.code
 		return
