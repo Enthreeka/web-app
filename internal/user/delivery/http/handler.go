@@ -37,20 +37,21 @@ func (h *handler) Register(router *httprouter.Router) {
 
 	router.GET(startPage, h.StartPage)
 	router.POST(login, h.Login)
-	router.GET(dashboard, h.MainPage)
-	//	router.GET(login, h.StartPage)
+	router.GET(dashboard, h.AccountPage)
+	//router.GET(login, h.StartPage)
 	//router.PUT(usersId, h.UpdateDataUser)
 	//router.PATCH(usersId, h.PartialUpdateDataUser)
 	//router.DELETE(usersId, h.DeleteUser)
+	//router.HandlerFunc(http.MethodGet, "/", apperror.Middleware(h.GetUsers)) //Example for middleware
 }
 
-func (h *handler) GetUsers(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (h *handler) GetUsers(w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "application/json")
 	all, err := h.service.GetAll(r.Context())
 
 	if err != nil {
 		w.WriteHeader(400)
-		return
+		return nil
 	}
 
 	allBytes, err := json.MarshalIndent(all, "", "")
@@ -60,8 +61,8 @@ func (h *handler) GetUsers(w http.ResponseWriter, r *http.Request, p httprouter.
 
 	w.WriteHeader(200)
 	w.Write(allBytes)
+	return nil
 }
-
 func (h *handler) CreateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 	login := r.FormValue("login")
@@ -72,12 +73,6 @@ func (h *handler) CreateUser(w http.ResponseWriter, r *http.Request, p httproute
 		Password: password,
 	}
 
-	//err := h.service.CreateUser(r.Context(), user)
-	//if err != nil {
-	//	w.WriteHeader(404)
-	//	return
-	//}
-
 	allBytes, err := json.MarshalIndent(user, "", "")
 	if err != nil {
 		fmt.Printf("Error : %v", err)
@@ -87,7 +82,6 @@ func (h *handler) CreateUser(w http.ResponseWriter, r *http.Request, p httproute
 	fmt.Fprintf(w, "Create user: %s \n", allBytes)
 
 }
-
 func (h *handler) Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	//w.Header().Set("Content-Type", "application/json")
 
@@ -114,18 +108,18 @@ func (h *handler) Login(w http.ResponseWriter, r *http.Request, p httprouter.Par
 
 		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 	} else {
-		path := filepath.Join("public", "index.html")
-		tmpl, err := template.ParseFiles(path)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-
-		err = tmpl.ExecuteTemplate(w, "index", nil)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
+		//path := filepath.Join("public", "index.html")
+		//tmpl, err := template.ParseFiles(path)
+		//if err != nil {
+		//	http.Error(w, err.Error(), http.StatusBadRequest)
+		//	return
+		//}
+		//
+		//err = tmpl.ExecuteTemplate(w, "index", nil)
+		//if err != nil {
+		//	http.Error(w, err.Error(), http.StatusBadRequest)
+		//	return
+		h.StartPage(w, r, p)
 	}
 }
 
@@ -139,14 +133,7 @@ func (h *handler) PartialUpdateDataUser(w http.ResponseWriter, r *http.Request, 
 	w.WriteHeader(204)
 	w.Write([]byte("partial update data user"))
 }
-func (h *handler) DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(204)
-	w.Write([]byte("delete user"))
-}
-
 func (h *handler) StartPage(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-
 	path := filepath.Join("public", "index.html")
 	tmpl, err := template.ParseFiles(path)
 	if err != nil {
@@ -162,8 +149,7 @@ func (h *handler) StartPage(w http.ResponseWriter, r *http.Request, p httprouter
 
 }
 
-func (h *handler) MainPage(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-
+func (h *handler) AccountPage(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	path := filepath.Join("public", "index2.html")
 	tmpl, err := template.ParseFiles(path)
 	if err != nil {
@@ -177,4 +163,9 @@ func (h *handler) MainPage(w http.ResponseWriter, r *http.Request, p httprouter.
 		return
 	}
 
+}
+func (h *handler) DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(204)
+	w.Write([]byte("delete user"))
 }
