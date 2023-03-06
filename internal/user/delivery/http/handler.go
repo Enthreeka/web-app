@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"net/http"
 	"path/filepath"
+	"time"
 	"web/internal/entity"
 	"web/internal/handlers"
 	"web/internal/user/usecase"
@@ -23,6 +24,7 @@ const (
 	startPage   = "/"
 	mainPage    = "/general"
 	login       = "/login"
+	dashboard   = "/dashboard"
 )
 
 func NewHandler(service *usecase.Service) handlers.Handler {
@@ -34,9 +36,8 @@ func (h *handler) Register(router *httprouter.Router) {
 	router.ServeFiles("/public/*filepath", http.Dir("public"))
 
 	router.GET(startPage, h.StartPage)
-	router.GET(mainPage, h.MainPage)
-	router.GET(users, h.GetUsers)
-	router.POST(usersCreate, h.CreateUser)
+	router.POST(login, h.Login)
+	router.GET(dashboard, h.MainPage)
 	//	router.GET(login, h.StartPage)
 	//router.PUT(usersId, h.UpdateDataUser)
 	//router.PATCH(usersId, h.PartialUpdateDataUser)
@@ -87,44 +88,47 @@ func (h *handler) CreateUser(w http.ResponseWriter, r *http.Request, p httproute
 
 }
 
-func (h *handler) LogIn(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	w.Header().Set("Content-Type", "application/json")
-	//userId, err := strconv.Atoi(strings.TrimLeft(p.ByName("userId"), ":")) <---Get user by id
-	//if err != nil {
-	//	fmt.Println(err)
-	//}
+func (h *handler) Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	//w.Header().Set("Content-Type", "application/json")
 
-	path := filepath.Join("public", "index.html")
-	tmpl, err := template.ParseFiles(path)
-	if err != nil {
-		http.Error(w, err.Error(), 400)
-		return
+	if r.Method == "POST" {
+
+		login := r.FormValue("login")
+		password := r.FormValue("password")
+
+		users, err := h.service.LogIn(r.Context(), login, password)
+		if err != nil {
+			http.Error(w, "invalid login or password", http.StatusUnauthorized)
+			w.WriteHeader(401)
+			return
+		}
+		userToken := users.Token
+
+		http.SetCookie(w, &http.Cookie{
+			Name:     "jwt",
+			Value:    userToken,
+			Expires:  time.Now().Add(time.Hour * 24),
+			HttpOnly: true,
+			SameSite: http.SameSiteStrictMode,
+		})
+
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+	} else {
+		path := filepath.Join("public", "index.html")
+		tmpl, err := template.ParseFiles(path)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		err = tmpl.ExecuteTemplate(w, "index", nil)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 	}
-
-	login := r.FormValue("login")
-	password := r.FormValue("password")
-
-	users, err := h.service.LogIn(r.Context(), login, password)
-	if err != nil {
-		w.WriteHeader(404) //TODO set new status.code
-		return
-	}
-	data := struct {
-		Login    string
-		Password string
-	}{
-		Login:    users.Login,
-		Password: users.Password,
-	}
-
-	err = tmpl.ExecuteTemplate(w, "index", data)
-	if err != nil {
-		http.Error(w, err.Error(), 400)
-		return
-	}
-
-	w.WriteHeader(200)
 }
+
 func (h *handler) UpdateDataUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(204)
@@ -142,7 +146,6 @@ func (h *handler) DeleteUser(w http.ResponseWriter, r *http.Request, p httproute
 }
 
 func (h *handler) StartPage(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	w.Header().Set("Content-Type", "application/json")
 
 	path := filepath.Join("public", "index.html")
 	tmpl, err := template.ParseFiles(path)
@@ -160,7 +163,6 @@ func (h *handler) StartPage(w http.ResponseWriter, r *http.Request, p httprouter
 }
 
 func (h *handler) MainPage(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	w.Header().Set("Content-Type", "application/json")
 
 	path := filepath.Join("public", "index2.html")
 	tmpl, err := template.ParseFiles(path)

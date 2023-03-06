@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/google/uuid"
 	"log"
 	"time"
 	"web/internal/entity"
@@ -29,7 +30,7 @@ func (s *Service) LogIn(ctx context.Context, login string, password string) (ent
 
 	user, err := s.repository.GetUser(ctx, login, password)
 	if err != nil {
-		return entity.User{}, fmt.Errorf("failed to create user : %v", err)
+		return entity.User{}, fmt.Errorf("failed to get user : %v", err)
 	}
 
 	if user == nil {
@@ -39,32 +40,38 @@ func (s *Service) LogIn(ctx context.Context, login string, password string) (ent
 		return entity.User{}, fmt.Errorf("incorrect password")
 	}
 
-	validToken, err := s.GenerateToken(user.Id)
+	validToken, err := s.GenerateToken(ctx, user.Id)
 	if err != nil {
 		return entity.User{}, fmt.Errorf("incorrect genereate token")
 	}
 
-	fmt.Println(validToken)
+	user.Token = validToken
+
 	return *user, nil
 }
 
-func (s *Service) GenerateToken(userID int) (string, error) {
-	token := jwt.New(jwt.SigningMethodHS256)
+func (s *Service) GenerateToken(ctx context.Context, userID int) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"sub": userID,
+		"exp": time.Now().Add(time.Hour * 24).Unix(),
+	})
 
-	claims := token.Claims.(jwt.MapClaims)
-
-	claims["sub"] = userID
-	claims["exp"] = time.Now().Add(time.Hour * 1000).Unix()
-
-	tokenString, err := token.SignedString([]byte("secret"))
+	tokenString, err := token.SignedString([]byte("secret-token-gen"))
 	if err != nil {
 		log.Fatalf("failed to SignedString %v", err)
 	}
 
 	// Store the token ID in the database
-	//if err := s.repository.CreateToken(tokenID.String(), userID); err != nil { TODO Create func in db/postgresql CreateToken
-	//	return "", fmt.Errorf("failed to store token: %v", err)
-	//}
+	tokenID, err := uuid.NewUUID()
+	if err != nil {
+		log.Fatalf("failed to create UUID %v ", err)
+	}
+
+	//Create token and implement in database
+	if err := s.repository.UpdateToken(ctx, tokenID.String(), userID); err != nil {
+		log.Fatalf("failed to store token: %v", err)
+		return "", fmt.Errorf("failed to store token: %v", err)
+	}
 	return tokenString, nil
 }
 

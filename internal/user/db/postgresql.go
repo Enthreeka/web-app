@@ -69,6 +69,21 @@ func (r *userRepository) FindAll(ctx context.Context) ([]entity.User, error) {
 	return users, nil
 }
 
+//TODO set time line for keeping life tokenID
+func (r *userRepository) UpdateToken(ctx context.Context, tokenID string, userID int) error {
+	query := `UPDATE users
+				SET token = $1
+				WHERE id = $2`
+
+	_, err := r.db.Exec(ctx, query, tokenID, userID)
+	if err != nil {
+		log.Fatalf("failed to create token: %v", err)
+		return fmt.Errorf("failed to create token: %v", err)
+	}
+
+	return nil
+}
+
 func (r *userRepository) GetUser(ctx context.Context, login string, password string) (*entity.User, error) {
 	if login == "" || password == "" {
 		log.Fatal("get empty login or password")

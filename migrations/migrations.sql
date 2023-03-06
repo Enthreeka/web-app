@@ -24,6 +24,8 @@ CREATE TABLE account
             references users (id)
 
 );
+alter table users
+add token varchar(200) ;
 
 -- CREATE TABLE tokens
 -- (
