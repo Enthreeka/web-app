@@ -27,6 +27,8 @@ CREATE TABLE account
 alter table users
 add token varchar(200) ;
 
+
+
 -- CREATE TABLE tokens
 -- (
 --     id int generated always as identity,

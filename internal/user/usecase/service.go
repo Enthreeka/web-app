@@ -21,9 +21,22 @@ func NewService(repository user.Repository) *Service {
 	}
 }
 
-func (s *Service) SignIn(ctx context.Context) error {
+func (s *Service) SignUp(ctx context.Context, user *entity.User) error {
 
-	return nil
+	err := s.repository.Create(ctx, user)
+	if err != nil {
+		return fmt.Errorf("failed to create user : %v", err)
+	}
+
+	validToken, err := s.GenerateToken(ctx, user.Id)
+	if err != nil {
+		log.Fatalf("failed to generate token %v", err)
+		return fmt.Errorf("incorrect genereate token")
+	}
+
+	user.Token = validToken
+
+	return err
 }
 
 func (s *Service) LogIn(ctx context.Context, login string, password string) (entity.User, error) {
@@ -53,7 +66,7 @@ func (s *Service) LogIn(ctx context.Context, login string, password string) (ent
 func (s *Service) GenerateToken(ctx context.Context, userID int) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": userID,
-		"exp": time.Now().Add(time.Hour * 24).Unix(),
+		"exp": time.Now().Add(time.Hour * 1).Unix(),
 	})
 
 	tokenString, err := token.SignedString([]byte("secret-token-gen"))

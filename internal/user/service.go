@@ -6,7 +6,7 @@ import (
 )
 
 type Service interface {
-	SignIn(ctx context.Context) error
+	SignUp(ctx context.Context, user *entity.User) error
 	LogIn(ctx context.Context, login string, password string) (entity.User, error)
 	GenerateToken(ctx context.Context, userID int) (string, error)
 	//GetAll(ctx context.Context) ([]entity.User, error)

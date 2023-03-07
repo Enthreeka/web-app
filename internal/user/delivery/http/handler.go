@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"html/template"
+	"log"
 	"net/http"
 	"path/filepath"
 	"time"
+	"web/internal/apperror"
 	"web/internal/entity"
 	"web/internal/handlers"
 	"web/internal/user/usecase"
@@ -18,13 +20,14 @@ type handler struct {
 }
 
 const (
+	startPage   = "/"
+	login       = "/login"
+	signup      = "/signup"
+	dashboard   = "/dashboard"
 	users       = "/users"
 	usersId     = "/users/:userId"
 	usersCreate = "/users/create"
-	startPage   = "/"
 	mainPage    = "/general"
-	login       = "/login"
-	dashboard   = "/dashboard"
 )
 
 func NewHandler(service *usecase.Service) handlers.Handler {
@@ -37,12 +40,8 @@ func (h *handler) Register(router *httprouter.Router) {
 
 	router.GET(startPage, h.StartPage)
 	router.POST(login, h.Login)
-	router.GET(dashboard, h.AccountPage)
-	//router.GET(login, h.StartPage)
-	//router.PUT(usersId, h.UpdateDataUser)
-	//router.PATCH(usersId, h.PartialUpdateDataUser)
-	//router.DELETE(usersId, h.DeleteUser)
-	//router.HandlerFunc(http.MethodGet, "/", apperror.Middleware(h.GetUsers)) //Example for middleware
+	router.POST(signup, h.SignUp)
+	router.GET(dashboard, apperror.AuthMiddleware(h.AccountPage))
 }
 
 func (h *handler) GetUsers(w http.ResponseWriter, r *http.Request) error {
@@ -63,28 +62,32 @@ func (h *handler) GetUsers(w http.ResponseWriter, r *http.Request) error {
 	w.Write(allBytes)
 	return nil
 }
-func (h *handler) CreateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	w.Header().Set("Content-Type", "application/json")
-	login := r.FormValue("login")
-	password := r.FormValue("password")
 
-	user := &entity.User{
-		Login:    login,
-		Password: password,
+func (h *handler) SignUp(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	if r.Method == "POST" {
+		login := r.FormValue("login")
+		password := r.FormValue("password")
+
+		user := &entity.User{
+			Login:    login,
+			Password: password,
+		}
+
+		err := h.service.SignUp(r.Context(), user)
+		if err != nil {
+			log.Fatalf("failed to get method SignUp")
+		}
+		//allBytes, err := json.MarshalIndent(user, "", "")
+		//if err != nil {
+		//	fmt.Printf("Error : %v", err)
+		//}
+		//w.WriteHeader(201)
+		//fmt.Fprintf(w, "Create user: %s \n", allBytes)
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 	}
-
-	allBytes, err := json.MarshalIndent(user, "", "")
-	if err != nil {
-		fmt.Printf("Error : %v", err)
-	}
-
-	w.WriteHeader(201)
-	fmt.Fprintf(w, "Create user: %s \n", allBytes)
 
 }
 func (h *handler) Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	//w.Header().Set("Content-Type", "application/json")
-
 	if r.Method == "POST" {
 
 		login := r.FormValue("login")
@@ -92,16 +95,14 @@ func (h *handler) Login(w http.ResponseWriter, r *http.Request, p httprouter.Par
 
 		users, err := h.service.LogIn(r.Context(), login, password)
 		if err != nil {
-			http.Error(w, "invalid login or password", http.StatusUnauthorized)
-			w.WriteHeader(401)
-			return
+			http.Redirect(w, r, "/", http.StatusSeeOther)
 		}
 		userToken := users.Token
 
 		http.SetCookie(w, &http.Cookie{
 			Name:     "jwt",
 			Value:    userToken,
-			Expires:  time.Now().Add(time.Hour * 24),
+			Expires:  time.Now().Add(time.Minute * 60),
 			HttpOnly: true,
 			SameSite: http.SameSiteStrictMode,
 		})
@@ -119,7 +120,7 @@ func (h *handler) Login(w http.ResponseWriter, r *http.Request, p httprouter.Par
 		//if err != nil {
 		//	http.Error(w, err.Error(), http.StatusBadRequest)
 		//	return
-		h.StartPage(w, r, p)
+		//	h.StartPage(w, r, p)
 	}
 }
 
