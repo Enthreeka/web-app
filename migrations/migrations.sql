@@ -3,8 +3,9 @@ CREATE TABLE users
     id int generated always as identity ,
     login varchar(100) not null unique ,
     password varchar(200) not null,
-    token varchar(200) not null ,
+    token varchar(200) DEFAULT 0,
     primary key (id)
+
 
 );
 
@@ -25,10 +26,6 @@ CREATE TABLE account
             references users (id)
 
 );
-alter table users
-add token varchar(200) ;
-
-
 
 -- CREATE TABLE tokens
 -- (
@@ -43,7 +40,11 @@ add token varchar(200) ;
 --             references users (id)
 -- );
 
-insert into users (login, password )values  ('n3ksmirn','827ccb0eea8a706c4c34a16891f84e7b');
+--n3ksmirn = 1234
+--ilisTopskiy = 1fsdjhj123hhjd
+--
+
+
 
 
 

@@ -13,6 +13,7 @@ import (
 	"web/internal/entity"
 	"web/internal/handlers"
 	"web/internal/user/usecase"
+	"web/internal/validation"
 )
 
 type handler struct {
@@ -47,7 +48,17 @@ func (h *handler) Register(router *httprouter.Router) {
 func (h *handler) SignUp(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	if r.Method == "POST" {
 		login := r.FormValue("login")
+		if !validation.IsValidationLogin(login) {
+			fmt.Println("login did not meet the requirements")
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
+		}
 		password := r.FormValue("password")
+		if !validation.IsValidationPassword(password) {
+			fmt.Println("password did not meet the requirements")
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
+		}
 
 		user := &entity.User{
 			Login:    login,
@@ -56,7 +67,7 @@ func (h *handler) SignUp(w http.ResponseWriter, r *http.Request, p httprouter.Pa
 
 		err := h.service.SignUp(r.Context(), user)
 		if err != nil {
-			log.Fatalf("failed to get method SignUp")
+			log.Printf("failed to get method SignUp error:%v", err)
 		}
 		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 	}
@@ -64,7 +75,6 @@ func (h *handler) SignUp(w http.ResponseWriter, r *http.Request, p httprouter.Pa
 }
 func (h *handler) Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	if r.Method == "POST" {
-
 		login := r.FormValue("login")
 		password := r.FormValue("password")
 
@@ -77,7 +87,7 @@ func (h *handler) Login(w http.ResponseWriter, r *http.Request, p httprouter.Par
 		http.SetCookie(w, &http.Cookie{
 			Name:     "jwt",
 			Value:    userToken,
-			Expires:  time.Now().Add(time.Minute * 60),
+			Expires:  time.Now().Add(time.Hour * 24),
 			HttpOnly: true,
 			SameSite: http.SameSiteStrictMode,
 		})

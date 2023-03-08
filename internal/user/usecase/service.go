@@ -45,8 +45,7 @@ func (s *Service) SignUp(ctx context.Context, user *entity.User) error {
 func (s *Service) LogIn(ctx context.Context, login string, password string) (entity.User, error) {
 	user, err := s.repository.GetUser(ctx, login, password)
 	if err != nil {
-		fmt.Println(user.Password)
-		log.Fatalf("failed to get user %s", err)
+		fmt.Printf("failed to get user error: %s \n", err)
 		return entity.User{}, fmt.Errorf("failed to get user : %v", err)
 	}
 	if user == nil {
@@ -73,7 +72,7 @@ func (s *Service) LogIn(ctx context.Context, login string, password string) (ent
 func (s *Service) GenerateToken(ctx context.Context, userID int) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": userID,
-		"exp": time.Now().Add(time.Hour * 1).Unix(),
+		"exp": time.Now().Add(time.Hour * 24).Unix(),
 	})
 
 	tokenString, err := token.SignedString([]byte("secret-token-gen"))
