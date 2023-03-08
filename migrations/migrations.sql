@@ -3,6 +3,7 @@ CREATE TABLE users
     id int generated always as identity ,
     login varchar(100) not null unique ,
     password varchar(200) not null,
+    token varchar(200) not null ,
     primary key (id)
 
 );
@@ -43,14 +44,6 @@ add token varchar(200) ;
 -- );
 
 insert into users (login, password )values  ('n3ksmirn','827ccb0eea8a706c4c34a16891f84e7b');
-
-insert into account (name) values ('Denis');
-
-SELECT * from users;
-
-select * from account;
-
-
 
 
 

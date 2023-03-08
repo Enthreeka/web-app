@@ -56,7 +56,7 @@ func main() {
 	//	log.Fatalf("failed to update account error - %v", err)
 	//}
 
-	//user, err := userRepository.GetUser(context.TODO(), 6)
+	//user, err := userRepository.GetUser(context.TODO(), "test2", "243261243130246d6e6e4150477a354a51474f5a764241664b74515a65394e6457437132304b4b2e4c4d5072454278535235576336527841654f4e69")
 	//if err != nil {
 	//	log.Fatalf("failed to get user -  %v", err)
 	//}

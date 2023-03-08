@@ -7,7 +7,6 @@ import (
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"log"
-
 	"web/internal/entity"
 	"web/internal/user"
 )
@@ -89,16 +88,16 @@ func (r *userRepository) GetUser(ctx context.Context, login string, password str
 	if login == "" || password == "" {
 		log.Fatal("get empty login or password")
 	}
-
 	var user entity.User
 
 	query := `SELECT id, login, password 
 				FROM users 
 					WHERE 
-				login = $1 AND password = $2`
+				login = $1`
 
-	err := r.db.QueryRow(ctx, query, login, password).Scan(&user.Id, &user.Login, &user.Password)
+	err := r.db.QueryRow(ctx, query, login).Scan(&user.Id, &user.Login, &user.Password)
 	if err != nil {
+		log.Printf("failed to query user %v", err)
 		return &entity.User{}, err
 	}
 
