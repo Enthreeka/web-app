@@ -6,6 +6,7 @@ import (
 )
 
 type Service interface {
-	AddTask(ctx context.Context, account *entity.Account) error
+	CreateTask(ctx context.Context, task *entity.Task) error
+	UpdateTask(ctx context.Context, task *entity.Task) error
 	GetTask(ctx context.Context, userID int) ([]string, []string, error)
 }

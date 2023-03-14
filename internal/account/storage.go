@@ -6,8 +6,9 @@ import (
 )
 
 type Repository interface {
-	CreateTask(ctx context.Context, account *entity.Account) error
-	CreateNameTask(ctx context.Context, account *entity.Account) error
+	CreateTask(ctx context.Context, task *entity.Task) error
+	UpdateDescriptionTask(ctx context.Context, task *entity.Task) error
+	UpdateNameTask(ctx context.Context, task *entity.Task) error
 	GetTask(ctx context.Context, userID int) ([]string, []string, error)
 	UpdateName(ctx context.Context, account *entity.Account, id int) error
 	AddEmail(ctx context.Context) error

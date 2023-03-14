@@ -17,16 +17,26 @@ func NewAccountService(repository account.Repository) *Service {
 		repository: repository,
 	}
 }
+func (s *Service) CreateTask(ctx context.Context, task *entity.Task) error {
 
-func (s *Service) AddTask(ctx context.Context, account *entity.Account) error {
+	err := s.repository.CreateTask(ctx, task)
+	if err != nil {
+		fmt.Printf("failed to create task %v", err)
+		return err
+	}
 
-	err := s.repository.CreateNameTask(ctx, account)
+	return nil
+}
+
+func (s *Service) UpdateTask(ctx context.Context, task *entity.Task) error {
+
+	err := s.repository.UpdateNameTask(ctx, task)
 	if err != nil {
 		fmt.Printf("failed to add name task %v", err)
 		return err
 	}
 
-	err = s.repository.CreateTask(ctx, account)
+	err = s.repository.UpdateDescriptionTask(ctx, task)
 	if err != nil {
 		fmt.Printf("failed to add task %v", err)
 		return err

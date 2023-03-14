@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"net/url"
 	"path/filepath"
 	"strconv"
 	"web/internal/account/usecase"
@@ -24,17 +25,20 @@ func NewAccountHandler(service *usecase.Service) handlers.Handler {
 	}
 }
 
+type Task struct {
+	Name        string
+	Description string
+}
+
 func (h *handler) Register(router *httprouter.Router) {
-
 	log.Println("Registering account routes...")
-
-	//router.GET("/dashboard", apperror.AuthMiddleware(h.AccountPage))
 
 	router.POST("/dashboard/add", h.AddTask)
 	router.GET("/dashboard", apperror.AuthMiddleware(h.GetTask))
-
 }
+
 func (h *handler) GetTask(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+
 	log.Printf("Handling GetTask request with parameters: %v", p)
 	path := filepath.Join("public", "index2.html")
 	tmpl, err := template.ParseFiles(path)
@@ -42,6 +46,13 @@ func (h *handler) GetTask(w http.ResponseWriter, r *http.Request, p httprouter.P
 		http.Error(w, err.Error(), 400)
 		return
 	}
+	//get username from cookie for transfers to html
+	cookie, err := r.Cookie("username")
+	if err != nil {
+		log.Fatalf("failed to get cookie")
+		return
+	}
+	cookieUsername := cookie.Value
 
 	q := r.URL.Query()
 	userID, _ := strconv.Atoi(q.Get("id"))
@@ -53,9 +64,9 @@ func (h *handler) GetTask(w http.ResponseWriter, r *http.Request, p httprouter.P
 			return
 		}
 
-		type Task struct {
-			Name        string
-			Description string
+		type DataUser struct {
+			Tasks    []Task
+			Username string
 		}
 
 		tasks := []Task{}
@@ -63,20 +74,28 @@ func (h *handler) GetTask(w http.ResponseWriter, r *http.Request, p httprouter.P
 			tasks = append(tasks, Task{Name: name, Description: description[i]})
 		}
 
-		fmt.Printf("tasks - %v \n", tasks)
+		data := DataUser{
+			Tasks:    tasks,
+			Username: cookieUsername,
+		}
 
-		//user := entity.User{
-		//	Login: "Login",
-		//}
-		//
-		//err = tmpl.Execute(w, user)
-		//if err != nil {
-		//	log.Fatalf("COULD NOT EXECUTE %v", err)
-		//	http.Error(w, err.Error(), 400)
-		//	return
-		//}
+		err = tmpl.Execute(w, data)
+		if err != nil {
+			log.Fatalf("COULD NOT EXECUTE %v", err)
+			http.Error(w, err.Error(), 400)
+			return
+		}
+	} else {
+		//if new user or user without fields,then he got this clear page
+		type DataUser struct {
+			Tasks    []Task
+			Username string
+		}
+		data := DataUser{
+			Username: cookieUsername,
+		}
 
-		err = tmpl.Execute(w, tasks)
+		err = tmpl.Execute(w, data)
 		if err != nil {
 			log.Fatalf("COULD NOT EXECUTE %v", err)
 			http.Error(w, err.Error(), 400)
@@ -84,97 +103,38 @@ func (h *handler) GetTask(w http.ResponseWriter, r *http.Request, p httprouter.P
 		}
 	}
 
-	err = tmpl.Execute(w, nil)
-	if err != nil {
-		log.Fatalf("COULD NOT EXECUTE %v", err)
-		http.Error(w, err.Error(), 400)
-		return
-	}
 }
 
-//func (h *handler) GetTask(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-//	log.Printf("Handling GetTask request with parameters: %v", p)
-//
-//	account := &entity.Account{UserId: 14}
-//
-//	tasks, err := h.service.GetTask(r.Context(), account)
-//	if err != nil {
-//		log.Printf("failed to get task in handler %v", err)
-//		return
-//	}
-//
-//	path := filepath.Join("public", "index2.html")
-//	tmpl, err := template.ParseFiles(path)
-//	if err != nil {
-//		http.Error(w, err.Error(), 400)
-//		return
-//	}
-//	//type TaskData struct {
-//	//	Task []entity.Account
-//	//}
-//	//
-//	//tasksData := TaskData{Task: tasks}
-//	//
-//	//tasksJSON, err := json.Marshal(tasksData)
-//	//if err != nil {
-//	//	log.Printf("failed to marshal tasks data: %v", err)
-//	//	return
-//	//}
-//	//
-//	//var data TaskData
-//	//err = json.Unmarshal(tasksJSON, &data)
-//	//if err != nil {
-//	//	log.Printf("failed to unmarshal tasks data: %v", err)
-//	//	return
-//	//}
-//	//
-//	//err = tmpl.Execute(w, map[string]interface{}{
-//	//	"users": data,
-//	//})
-//
-//	err = tmpl.Execute(w, map[string]interface{}{
-//		"tasks": tasks,
-//	})
-//	if err != nil {
-//		log.Fatalf("COULD NOT EXECUTE %v", err)
-//		http.Error(w, err.Error(), 400)
-//		return
-//	}
-//
-//}
-
 func (h *handler) AddTask(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	r.Header.Set("Content-Type", "application/json")
-	log.Printf("Handling CreateTask request with parameters: %v", p)
+	log.Printf("Handling UpdateDescriptionTask request with parameters: %v", p)
 
 	descriptionName := r.FormValue("descriptionName")
 	description := r.FormValue("description")
-	//userid := p.ByName("user_id")
-
-	//fmt.Println(userid)
-	fmt.Println("description = ", description)
-	fmt.Println("descriptionName = ", descriptionName)
 
 	//q := r.URL.Query()
-	//q.Get("user_id")
-	//query := q.Encode()
-	//	totalString := strings.Trim(query, "user=")
-	//fmt.Println(query)
+	//userID, err := strconv.Atoi(q.Get("id"))
+	//if err != nil || userID <= 1 {
+	//	log.Printf("failed to get id from url in account/handler %v", err)
+	//	http.NotFound(w, r)
+	//	return
+	//}
+	//fmt.Println(userID)
 
-	//userIdInt, _ := strconv.Atoi(userid)
-	userIdInt := 14
-
-	account := &entity.Account{
-		UserId:          userIdInt,
+	task := &entity.Task{
+		AccountId:       2,
 		NameTask:        descriptionName,
 		DescriptionTask: description,
 	}
 
-	err := h.service.AddTask(r.Context(), account)
+	err := h.service.CreateTask(r.Context(), task)
 	if err != nil {
 		fmt.Printf("failed to add taks %v", err)
 		return
 	}
-	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 
+	q := url.Values{}
+	q.Add("id", strconv.Itoa(2))
+	url := fmt.Sprintf("/dashboard?%s", q.Encode())
+
+	http.Redirect(w, r, url, http.StatusSeeOther)
 }

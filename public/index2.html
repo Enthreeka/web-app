@@ -72,7 +72,10 @@
         <div class="header__right__user__popup__top">
             <img src="/public/images/user-default.svg" alt="user-icon" class="header__right__user__popup__icon" width="50" height="50">
 
-            <h2 class="header__right__user__popup__top__heading"> </h2>
+
+            <h2 class="header__right__user__popup__top__heading">{{.Username}}</h2>
+
+
 
         </div>
         <ul class="header__right__user__popup__list">
@@ -357,9 +360,10 @@
                         <span class="main__view__content__heading__span"></span>
                     </div>
                     <ul class="main__view__content__list">
+                 {{ with .Tasks }}
                         {{range .}}
                         <li class="main__view__content__list__item item default">
-                            <span class="main__view__content__list__item__span__desc" contenteditable="false">{{.Name }}</span>
+                            <span class="main__view__content__list__item__span__desc"  contenteditable="false">{{.Name }}</span>
                             <span class="main__view__content__list__item__span__sub__desc" contenteditable="false">{{.Description}}</span>
                             <button class="main__view__content__list__item__button__done" type="button"></button>
                             <i class="fas fa-bars"></i>
@@ -369,14 +373,13 @@
                             </div>
                         </li>
                         {{end}}
+                {{end}}
                     </ul>
-<!--                    -->
                     <form class="main__view__content__form" action="/dashboard/add" method="post">
                         <textarea class="main__view__content__form__task__description" maxlength="350" placeholder="Название задачи" name="descriptionName"></textarea>
                         <textarea class="main__view__content__form__task__sub__description" placeholder="Описание"  maxlength="500" name="description" ></textarea>
-                        <button class="main__view__content__form__button__clean">Очистить</button>
-                        <button class="main__view__content__form__button__add" type="submit">Добавить задачу</button>
-<!--                        </div>-->
+<!--                         <div class="main__view__content__form__button__clean">Очистить</div>-->
+                        <button class="main__view__content__form__button__add" >Добавить задачу</button>
                     </form>
                 </div>
             </div>

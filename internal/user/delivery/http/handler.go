@@ -84,7 +84,6 @@ func (h *handler) SignUp(w http.ResponseWriter, r *http.Request, p httprouter.Pa
 		q.Add("id", strconv.Itoa(dataUser.Id))
 		url := fmt.Sprintf("/dashboard?%s", q.Encode())
 
-		fmt.Println("test")
 		http.Redirect(w, r, url, http.StatusSeeOther)
 	}
 
@@ -98,14 +97,6 @@ func (h *handler) Login(w http.ResponseWriter, r *http.Request, p httprouter.Par
 		if err != nil {
 			http.Redirect(w, r, "/", http.StatusSeeOther)
 		}
-
-		//q := r.URL.Query()
-		//q.Set("user_id", strconv.Itoa(users.Id))
-		//query := q.Encode()
-		//userID := p.ByName("user_id")
-		//
-		//fmt.Println("Encode - ", query)
-		//fmt.Println("method Login - ", userID)
 
 		h.user.Login = login
 		h.user.Id = users.Id

@@ -635,12 +635,14 @@ const showNonImportantOnly = (item) => {
 for (let i = 0; i < items.length; i++) {
   deleteTaskHandler(items[i]);
 };
+if(document.querySelectorAll('.main__view__content__form__button__clean').length) {
+    cleaningButton.addEventListener('click', (evt) => {
+      evt.preventDefault();
+      mainTaskDescription.value = '';
+      mainTaskSubDescriptionInput.value = '';
+    });
+}
 
-cleaningButton.addEventListener('click', (evt) => {
-  evt.preventDefault();
-  mainTaskDescription.value = '';
-  mainTaskSubDescriptionInput.value = '';
-});
 
 addingButton.addEventListener('click', (e) => {
   e.preventDefault();
