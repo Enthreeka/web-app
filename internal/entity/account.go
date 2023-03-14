@@ -2,7 +2,7 @@ package entity
 
 type Account struct {
 	Id              int    `json:"id"`
-	UserId          string `json:"user_id"`
+	UserId          int    `json:"user_id"`
 	Name            string `json:"name"`
 	Email           string `json:"email"`
 	Photo           string `json:"photo"`

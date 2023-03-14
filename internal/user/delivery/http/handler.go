@@ -7,9 +7,10 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"net/url"
 	"path/filepath"
+	"strconv"
 	"time"
-	"web/internal/apperror"
 	"web/internal/entity"
 	"web/internal/handlers"
 	"web/internal/user/usecase"
@@ -18,21 +19,25 @@ import (
 
 type handler struct {
 	service *usecase.Service
+	user    *entity.User
+}
+
+type AccountPageData struct {
+	User *entity.User
 }
 
 const (
-	startPage   = "/"
-	login       = "/login"
-	signup      = "/signup"
-	dashboard   = "/dashboard"
-	users       = "/users"
-	usersId     = "/users/:userId"
-	usersCreate = "/users/create"
-	mainPage    = "/general"
+	startPage = "/"
+	login     = "/login"
+	signup    = "/signup"
+	dashboard = "/dashboard"
 )
 
-func NewHandler(service *usecase.Service) handlers.Handler {
-	return &handler{service: service}
+func NewHandler(service *usecase.Service, user *entity.User) handlers.Handler {
+	return &handler{
+		service: service,
+		user:    user,
+	}
 }
 
 func (h *handler) Register(router *httprouter.Router) {
@@ -42,7 +47,7 @@ func (h *handler) Register(router *httprouter.Router) {
 	router.GET(startPage, h.StartPage)
 	router.POST(login, h.Login)
 	router.POST(signup, h.SignUp)
-	router.GET(dashboard, apperror.AuthMiddleware(h.AccountPage))
+	//	router.GET(dashboard, apperror.AuthMiddleware(h.AccountPage))
 }
 
 func (h *handler) SignUp(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -65,11 +70,22 @@ func (h *handler) SignUp(w http.ResponseWriter, r *http.Request, p httprouter.Pa
 			Password: password,
 		}
 
-		err := h.service.SignUp(r.Context(), user)
+		dataUser, err := h.service.SignUp(r.Context(), user)
 		if err != nil {
 			log.Printf("failed to get method SignUp error:%v", err)
 		}
-		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+
+		http.SetCookie(w, &http.Cookie{
+			Name:  "username",
+			Value: dataUser.Login,
+		})
+
+		q := url.Values{}
+		q.Add("id", strconv.Itoa(dataUser.Id))
+		url := fmt.Sprintf("/dashboard?%s", q.Encode())
+
+		fmt.Println("test")
+		http.Redirect(w, r, url, http.StatusSeeOther)
 	}
 
 }
@@ -82,8 +98,21 @@ func (h *handler) Login(w http.ResponseWriter, r *http.Request, p httprouter.Par
 		if err != nil {
 			http.Redirect(w, r, "/", http.StatusSeeOther)
 		}
+
+		//q := r.URL.Query()
+		//q.Set("user_id", strconv.Itoa(users.Id))
+		//query := q.Encode()
+		//userID := p.ByName("user_id")
+		//
+		//fmt.Println("Encode - ", query)
+		//fmt.Println("method Login - ", userID)
+
+		h.user.Login = login
+		h.user.Id = users.Id
+
 		userToken := users.Token
 
+		//set in cookie jwt token for 24 hours
 		http.SetCookie(w, &http.Cookie{
 			Name:     "jwt",
 			Value:    userToken,
@@ -92,7 +121,18 @@ func (h *handler) Login(w http.ResponseWriter, r *http.Request, p httprouter.Par
 			SameSite: http.SameSiteStrictMode,
 		})
 
-		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+		//set in cookie username/login
+		http.SetCookie(w, &http.Cookie{
+			Name:  "username",
+			Value: users.Login,
+		})
+
+		//Set the user_id in url
+		q := url.Values{}
+		q.Add("id", strconv.Itoa(users.Id))
+		url := fmt.Sprintf("/dashboard?%s", q.Encode())
+
+		http.Redirect(w, r, url, http.StatusSeeOther)
 	}
 }
 func (h *handler) StartPage(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -118,11 +158,23 @@ func (h *handler) AccountPage(w http.ResponseWriter, r *http.Request, p httprout
 		return
 	}
 
-	err = tmpl.Execute(w, nil)
+	data := AccountPageData{
+		User: h.user,
+	}
+
+	fmt.Println(data.User.Id)
+	http.SetCookie(w, &http.Cookie{
+		Name:  "username",
+		Value: data.User.Login,
+	})
+
+	err = tmpl.Execute(w, data)
 	if err != nil {
 		http.Error(w, err.Error(), 400)
 		return
 	}
+
+	http.Redirect(w, r, "/dashboard/add", http.StatusSeeOther)
 
 }
 

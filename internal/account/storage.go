@@ -5,12 +5,13 @@ import (
 	"web/internal/entity"
 )
 
-type Storage interface {
-	CreateAccount(ctx context.Context, account *entity.Account) error
+type Repository interface {
+	CreateTask(ctx context.Context, account *entity.Account) error
+	CreateNameTask(ctx context.Context, account *entity.Account) error
+	GetTask(ctx context.Context, userID int) ([]string, []string, error)
 	UpdateName(ctx context.Context, account *entity.Account, id int) error
 	AddEmail(ctx context.Context) error
 	AddPhoto(ctx context.Context) error
-	AddTask(ctx context.Context) error
 	FindAll(ctx context.Context) error
 	//DeleteName(ctx context.Context) error
 	//DeleteEmail(ctx context.Context) error

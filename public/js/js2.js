@@ -438,7 +438,7 @@ let deleteTaskHandler = (item) => {
         myCanvas.style.left = '0';
         myCanvas.style.width = '100%';
         myCanvas.style.height = '100vh';
-        myCanvas.style.zIndex = '1';
+        myCanvas.style.zIndex = '-10';
         document.body.appendChild(myCanvas);
         
         var myConfetti = confetti.create(myCanvas, {
@@ -677,6 +677,39 @@ addingButton.addEventListener('click', (e) => {
   isTaskEditable(newMainTask);
   deleteTaskHandler(newMainTask);
 });
+
+window.onload = function() {
+  let mainItems = document.querySelectorAll('.main__view__content__list__item')
+  itemsLoaded(mainItems)
+  function itemsLoaded(mainItems) {
+    let mainTaskDescriptionText = mainTaskDescription.value;
+    let mainTaskSubDescription = mainTaskSubDescriptionInput.value;
+    if (mainTaskDescriptionText !== '' || mainTaskSubDescription !== '') {
+      taskList.appendChild(newMainTask);
+      counterForTasks++;
+      counterForAllTasks++;
+      counterForTasks > 0 ? howMuchTasksForToday.textContent = 'Задач на сегодня: ' + counterForTasks : howMuchTasksForToday.textContent = 'Все задачи выполнены! Или их и не было...';
+      }
+
+      counterForCommonTasks >= 0 ? counterForCommonTasks = counterForAllTasks - counterForImportantTasks : counterForCommonTasks = 0;
+      counterForImportantTasks >= 0 ? counterForImportantTasks = counterForAllTasks - counterForCommonTasks : counterForImportantTasks = 0;
+
+      howMuchCommonTasks.textContent = counterForCommonTasks;
+      howMuchImportantTasks.textContent = counterForImportantTasks;
+      howMuchTasks.textContent = counterForAllTasks;
+
+      mainTaskDescription.value = '';
+      mainTaskSubDescriptionInput.value = '';
+    for (let i = 0; i < mainItems.length; i++) {
+      showAllTasks(mainItems[i]);
+      showimportantOnly(mainItems[i]);
+      showNonImportantOnly(mainItems[i]);
+      isTaskImportant(mainItems[i]);
+      isTaskEditable(mainItems[i]);
+      deleteTaskHandler(mainItems[i]);
+    };
+  }
+}
 
 const mobileMenuButton = document.querySelector('.header__navigation__left__burger__settings');
 const leftBarPannel = document.querySelector('.header__right__user__settings__popup__content__left');

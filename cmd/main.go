@@ -8,7 +8,11 @@ import (
 	"net"
 	"net/http"
 	"time"
+	"web/internal/account/db"
+	http3 "web/internal/account/delivery/http"
+	usecase2 "web/internal/account/usecase"
 	"web/internal/config"
+	"web/internal/entity"
 	db2 "web/internal/user/db"
 	http2 "web/internal/user/delivery/http"
 	"web/internal/user/usecase"
@@ -16,51 +20,27 @@ import (
 )
 
 func main() {
-
 	cfg := config.GetConfig()
 
-	db, err := postgresql.NewConnect(context.TODO(), cfg.Storage)
+	dataBase, err := postgresql.NewConnect(context.TODO(), cfg.Storage)
 	if err != nil {
 		log.Fatalf("%W failed to init DB connection", err)
 	}
 
-	userRepository := db2.NewUserRepository(db)
+	userRepository := db2.NewUserRepository(dataBase)
+	accountRepository := db.NewAccountRepository(dataBase)
 
-	service := usecase.NewService(userRepository)
+	userService := usecase.NewUserService(userRepository)
+	accountService := usecase2.NewAccountService(accountRepository)
 
 	router := httprouter.New()
 
-	handler := http2.NewHandler(service)
-	handler.Register(router)
+	user := &entity.User{}
+	userHandler := http2.NewHandler(userService, user)
+	accountHandler := http3.NewAccountHandler(accountService)
 
-	//user := &entity.User{
-	//	Login:    "olegLeon",
-	//	Password: "daun",
-	//}
-	//userRepository.CreateUser(context.TODO(), user)
-
-	//accountRepository := db3.NewAccountRepository(db)
-	//
-	//account := &entity.Account{
-	//	UserId: "4",
-	//	Name:   "ilyha",
-	//}
-	//
-	//err = accountRepository.CreateAccount(context.TODO(), account)
-	//if err != nil {
-	//	log.Fatalf("failed to create account %v", err)
-	//}
-
-	//err = accountRepository.UpdateName(context.TODO(), account, 1)
-	//if err != nil {
-	//	log.Fatalf("failed to update account error - %v", err)
-	//}
-
-	//user, err := userRepository.GetUser(context.TODO(), "test2", "243261243130246d6e6e4150477a354a51474f5a764241664b74515a65394e6457437132304b4b2e4c4d5072454278535235576336527841654f4e69")
-	//if err != nil {
-	//	log.Fatalf("failed to get user -  %v", err)
-	//}
-	//fmt.Println(user)
+	userHandler.Register(router)
+	accountHandler.Register(router)
 
 	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%s", cfg.Server.Hostname, cfg.Server.Port))
 	if err != nil {
@@ -74,5 +54,4 @@ func main() {
 	}
 
 	log.Fatal(server.Serve(listener))
-
 }

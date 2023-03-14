@@ -17,29 +17,37 @@ type Service struct {
 	repository user.Repository
 }
 
-func NewService(repository user.Repository) *Service {
+func NewUserService(repository user.Repository) *Service {
 	return &Service{
 		repository: repository,
 	}
 }
 
-func (s *Service) SignUp(ctx context.Context, user *entity.User) error {
+func (s *Service) SignUp(ctx context.Context, user *entity.User) (*entity.User, error) {
 	hasedBytes := string(HashPassword(user.Login, user.Password))
 	user.Password = hasedBytes
 
-	err := s.repository.Create(ctx, user)
+	dataUser, err := s.repository.CreateUser(ctx, user)
 	if err != nil {
-		return fmt.Errorf("failed to create user : %v", err)
+		return nil, fmt.Errorf("failed to create user : %v", err)
+	}
+
+	account := &entity.Account{
+		UserId: user.Id,
+	}
+	err = s.repository.CreateAccount(ctx, account)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create account : %v", err)
 	}
 
 	validToken, err := s.GenerateToken(ctx, user.Id)
 	if err != nil {
 		log.Fatalf("failed to generate token %v", err)
-		return fmt.Errorf("incorrect genereate token")
+		return nil, fmt.Errorf("incorrect genereate token")
 	}
 	user.Token = validToken
 
-	return err
+	return dataUser, err
 }
 
 func (s *Service) LogIn(ctx context.Context, login string, password string) (entity.User, error) {
@@ -86,7 +94,7 @@ func (s *Service) GenerateToken(ctx context.Context, userID int) (string, error)
 		log.Fatalf("failed to create UUID %v ", err)
 	}
 
-	//Create token and implement in database
+	//CreateUser token and implement in database
 	if err := s.repository.UpdateToken(ctx, tokenID.String(), userID); err != nil {
 		log.Fatalf("failed to store token: %v", err)
 		return "", fmt.Errorf("failed to store token: %v", err)

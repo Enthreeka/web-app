@@ -41,11 +41,8 @@ CREATE TABLE account
 -- );
 
 --n3ksmirn = 1234
---ilisTopskiy = 1fsdjhj123hhjd
+        --ilisTopskiy = 1fsdjhj123hhjd
 --
-
-
-
 
 
 

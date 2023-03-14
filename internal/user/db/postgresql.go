@@ -19,7 +19,7 @@ func NewUserRepository(db *pgxpool.Pool) user.Repository {
 	return &userRepository{db: db}
 }
 
-func (r *userRepository) Create(ctx context.Context, user *entity.User) error {
+func (r *userRepository) CreateUser(ctx context.Context, user *entity.User) (*entity.User, error) {
 	query := `INSERT INTO users 
 				 (login, password ) 
 				VALUES
@@ -32,11 +32,31 @@ func (r *userRepository) Create(ctx context.Context, user *entity.User) error {
 			pgErr = err.(*pgconn.PgError)
 			newErr := fmt.Errorf(fmt.Sprintf("SQL Error: %s,Detail: %s, Where: %s", pgErr.Error(), pgErr.Detail, pgErr.Where))
 			fmt.Println(newErr)
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (r *userRepository) CreateAccount(ctx context.Context, account *entity.Account) error {
+	query := `INSERT INTO account
+				(user_id)
+				VALUES
+					($1)
+				RETURNING id`
+
+	if err := r.db.QueryRow(ctx, query, account.UserId).Scan(&account.Id); err != nil {
+		var pgErr *pgconn.PgError
+		if errors.Is(err, pgErr) {
+			pgErr = err.(*pgconn.PgError)
+			newErr := fmt.Errorf(fmt.Sprintf("SQL Error: %s,Detail: %s, Where: %s", pgErr.Error(), pgErr.Detail, pgErr.Where))
+			fmt.Println(newErr)
 			return nil
 		}
 		return err
 	}
-
 	return nil
 }
 
