@@ -669,8 +669,8 @@ addingButton.addEventListener('click', (e) => {
   howMuchImportantTasks.textContent = counterForImportantTasks;
   howMuchTasks.textContent = counterForAllTasks;
 
-  mainTaskDescription.value = '';
-  mainTaskSubDescriptionInput.value = '';
+//   mainTaskDescription.value = '';
+//   mainTaskSubDescriptionInput.value = '';
 
   showAllTasks(newMainTask);
   showimportantOnly(newMainTask);
@@ -1074,3 +1074,17 @@ notificationsForm.addEventListener('submit', () => {
       notificationsCondition.textContent = 'Уведомления выключены';
     }
 })
+addingButton.onclick = function(e) {
+    formSend(e,newTaskForm)
+}
+async function formSend(e,form) { //сама функция
+    e.preventDefault();
+    let formData = new FormData(form)
+      form.classList.add('_sending');
+        let response = await fetch('/dashboard/add' ,{
+            method: 'POST',
+            body: formData, // тут по идеи должны быть инпуты
+        });
+          mainTaskDescription.value = '';
+          mainTaskSubDescriptionInput.value = '';
+}

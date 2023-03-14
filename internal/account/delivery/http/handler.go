@@ -6,7 +6,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"net/url"
 	"path/filepath"
 	"strconv"
 	"web/internal/account/usecase"
@@ -108,6 +107,12 @@ func (h *handler) GetTask(w http.ResponseWriter, r *http.Request, p httprouter.P
 func (h *handler) AddTask(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	log.Printf("Handling UpdateDescriptionTask request with parameters: %v", p)
 
+	err := r.ParseForm()
+	if err != nil {
+		log.Fatalf("FAILED TO PARSE FORM %v", err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	descriptionName := r.FormValue("descriptionName")
 	description := r.FormValue("description")
 
@@ -126,15 +131,15 @@ func (h *handler) AddTask(w http.ResponseWriter, r *http.Request, p httprouter.P
 		DescriptionTask: description,
 	}
 
-	err := h.service.CreateTask(r.Context(), task)
+	err = h.service.CreateTask(r.Context(), task)
 	if err != nil {
 		fmt.Printf("failed to add taks %v", err)
 		return
 	}
 
-	q := url.Values{}
-	q.Add("id", strconv.Itoa(2))
-	url := fmt.Sprintf("/dashboard?%s", q.Encode())
-
-	http.Redirect(w, r, url, http.StatusSeeOther)
+	//q := url.Values{}
+	//q.Add("id", strconv.Itoa(2))
+	//url := fmt.Sprintf("/dashboard?%s", q.Encode())
+	//
+	//http.Redirect(w, r, url, http.StatusSeeOther)
 }
