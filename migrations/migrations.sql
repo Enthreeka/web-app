@@ -19,7 +19,7 @@ CREATE TABLE account
     subscribe boolean null ,
     name_task varchar(250) null ,
     description_task text null,
-    date_signup date null,
+    date_signup date DEFAULT now(),
     primary key (id),
     constraint fk_users
         foreign key (user_id)
@@ -40,8 +40,8 @@ CREATE TABLE account
 --             references users (id)
 -- );
 
---n3ksmirn = 1234
-        --ilisTopskiy = 1fsdjhj123hhjd
+--n3ksmirn = 1fsdjhj123hhjd
+--ilisTopskiy = ;;1afkasfo34
 --
 
 
