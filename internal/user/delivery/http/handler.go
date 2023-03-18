@@ -7,9 +7,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"net/url"
 	"path/filepath"
-	"strconv"
 	"time"
 	"web/internal/entity"
 	"web/internal/handlers"
@@ -31,6 +29,7 @@ const (
 	login     = "/login"
 	signup    = "/signup"
 	dashboard = "/dashboard"
+	leave     = "/dashboard/leave"
 )
 
 func NewHandler(service *usecase.Service, user *entity.User) handlers.Handler {
@@ -47,7 +46,13 @@ func (h *handler) Register(router *httprouter.Router) {
 	router.GET(startPage, h.StartPage)
 	router.POST(login, h.Login)
 	router.POST(signup, h.SignUp)
+	//router.PATCH(leave, h.LeaveFromAccount)
+
 	//	router.GET(dashboard, apperror.AuthMiddleware(h.AccountPage))
+}
+
+func (h *handler) LeaveFromAccount(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+
 }
 
 func (h *handler) SignUp(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -80,11 +85,15 @@ func (h *handler) SignUp(w http.ResponseWriter, r *http.Request, p httprouter.Pa
 			Value: dataUser.Login,
 		})
 
-		q := url.Values{}
-		q.Add("id", strconv.Itoa(dataUser.Id))
-		url := fmt.Sprintf("/dashboard?%s", q.Encode())
+		//q := url.Values{}
+		//q.Add("id", dataUser.Id)
+		//url := fmt.Sprintf("/dashboard?%s", q.Encode())
+		http.SetCookie(w, &http.Cookie{
+			Name:  "id",
+			Value: dataUser.Id,
+		})
 
-		http.Redirect(w, r, url, http.StatusSeeOther)
+		http.Redirect(w, r, dashboard, http.StatusSeeOther)
 	}
 
 }
@@ -118,12 +127,16 @@ func (h *handler) Login(w http.ResponseWriter, r *http.Request, p httprouter.Par
 			Value: users.Login,
 		})
 
-		//Set the user_id in url
-		q := url.Values{}
-		q.Add("id", strconv.Itoa(users.Id))
-		url := fmt.Sprintf("/dashboard?%s", q.Encode())
+		//Set the user_id in cookie
+		//q := url.Values{}
+		//q.Add("id", users.Id)
+		//url := fmt.Sprintf("/dashboard?%s", q.Encode())
+		http.SetCookie(w, &http.Cookie{
+			Name:  "id",
+			Value: users.Id,
+		})
 
-		http.Redirect(w, r, url, http.StatusSeeOther)
+		http.Redirect(w, r, dashboard, http.StatusSeeOther)
 	}
 }
 func (h *handler) StartPage(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -153,7 +166,6 @@ func (h *handler) AccountPage(w http.ResponseWriter, r *http.Request, p httprout
 		User: h.user,
 	}
 
-	fmt.Println(data.User.Id)
 	http.SetCookie(w, &http.Cookie{
 		Name:  "username",
 		Value: data.User.Login,

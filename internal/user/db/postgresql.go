@@ -90,7 +90,7 @@ func (r *userRepository) FindAll(ctx context.Context) ([]entity.User, error) {
 }
 
 //TODO set time line for keeping life tokenID
-func (r *userRepository) UpdateToken(ctx context.Context, tokenID string, userID int) error {
+func (r *userRepository) UpdateToken(ctx context.Context, tokenID string, userID string) error {
 	query := `UPDATE users
 				SET token = $1
 				WHERE id = $2`

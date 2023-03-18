@@ -19,7 +19,7 @@
                         <div class="header__navigation__left__burger__line"></div>
                     </button>
                     <button class="header__navigation__left__home header__btn default">
-                        <a href="/public/index2.html"><img src="/public/images/common/home.svg" alt="home-button" width="20" height="20"></a>
+                        <a href="/dashboard"><img src="/public/images/common/home.svg" alt="home-button" width="20" height="20"></a>
                     </button>
                 </ul>
                 <ul class="header__navigation__right">
@@ -72,9 +72,7 @@
         <div class="header__right__user__popup__top">
             <img src="/public/images/user-default.svg" alt="user-icon" class="header__right__user__popup__icon" width="50" height="50">
 
-
-            <h2 class="header__right__user__popup__top__heading">{{.Username}}</h2>
-
+            <h2 class="header__right__user__popup__top__heading">{{.withFields.Username}}</h2>
 
 
         </div>
@@ -100,7 +98,9 @@
             </li>
 
             <li class="header__right__user__popup__list__item sign-out">
+                <form>
                 <a href="#!" class="header__right__user__popup__list__item__sign-out__link">Выйти</a>
+                </form>
             </li>
         </ul>
     </div>
@@ -242,7 +242,7 @@
                             </button>
                             <p class="header__right__user__settings__popup__content__right__themes__theme__paragraph">Стандартная</p>
                         </div>
-                        <div class="header__right__user__settings__popup__content__right__themes__theme green__theme">
+                        <div class="header__right__user__settings__popup__content__right__themes__theme green__theme active">
                             <button class="header__right__user__settings__popup__content__right__themes__theme__button green__btn">
                                 <img src="/public/images/page-2/theme-2.svg" alt="theme-2" width="150" height="50">
                             </button>
@@ -360,12 +360,16 @@
                         <span class="main__view__content__heading__span"></span>
                     </div>
                     <ul class="main__view__content__list">
-                 {{ with .Tasks }}
+                 {{ with .withFields.Tasks }}
                         {{range .}}
                         <li class="main__view__content__list__item item default">
                             <span class="main__view__content__list__item__span__desc"  contenteditable="false">{{.Name }}</span>
                             <span class="main__view__content__list__item__span__sub__desc" contenteditable="false">{{.Description}}</span>
-                            <button class="main__view__content__list__item__button__done" type="button"></button>
+                            <form action="/dashboard/delete" method="delete">
+                            <button class="main__view__content__list__item__button__done" type="submit"></button>
+                                <input type="hidden" name="taskId" value="{{.Id}}">
+
+                            </form>
                             <i class="fas fa-bars"></i>
                             <div class="maiv__view__content__list__item__bottom__bar">
                                 <button class="main__view__content__form__important"></button>
@@ -394,7 +398,10 @@
         <li class="main__view__content__list__item item">
             <span class="main__view__content__list__item__span__desc"> </span>
             <span class="main__view__content__list__item__span__sub__desc"></span>
-            <button class="main__view__content__list__item__button__done" type="button"></button>
+            <form action="/dashboard/delete" method="delete">
+                <button class="main__view__content__list__item__button__done" type="button"></button>
+                <input type="hidden" name="taskId" value="{{.taskID.Id}}">
+            </form>
             <i class="fas fa-bars"></i>
             <div class="maiv__view__content__list__item__bottom__bar">
                 <button class="main__view__content__form__important"></button>
@@ -402,8 +409,6 @@
             </div>
         </li>
     </template>
-
-
 
 
     <template class="main__tasks__template__date">
@@ -415,5 +420,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script src="/public/js/js2.js"></script>
+
+
 </body>
 </html>

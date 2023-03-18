@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"strconv"
 	"web/internal/account"
 	"web/internal/entity"
 )
@@ -18,14 +19,20 @@ func NewAccountRepository(db *pgxpool.Pool) account.Repository {
 	return &accountRepository{db: db}
 }
 
-func (r *accountRepository) CreateTask(ctx context.Context, task *entity.Task) error {
-	query := `INSERT INTO tasks
-				(account_id,name_task,description_task)
-				VALUES
-					($1,$2,$3)
-				RETURNING id`
+//func (r *accountRepository) GetTaskForDelete(ctx context.Context, task *entity.Task) ([]entity.Task, error) {
+//	query := `SELECT`
+//
+//	return taskID, nil
+//}
 
-	if err := r.db.QueryRow(ctx, query, task.AccountId, task.NameTask, task.DescriptionTask).Scan(&task.Id); err != nil {
+func (r *accountRepository) DeleteTask(ctx context.Context, taskID int) error {
+	var task entity.Task
+
+	query := `DELETE FROM tasks
+	            where 
+				id= $1`
+
+	if err := r.db.QueryRow(ctx, query, taskID).Scan(&task.Id); err != nil {
 		var pgErr *pgconn.PgError
 		if errors.Is(err, pgErr) {
 			pgErr = err.(*pgconn.PgError)
@@ -36,6 +43,26 @@ func (r *accountRepository) CreateTask(ctx context.Context, task *entity.Task) e
 		return err
 	}
 	return nil
+}
+
+func (r *accountRepository) CreateTask(ctx context.Context, task *entity.Task) (int, error) {
+	query := `INSERT INTO tasks
+				(user_id,name_task,description_task)
+				VALUES
+					($1,$2,$3)
+				RETURNING id`
+
+	if err := r.db.QueryRow(ctx, query, task.AccountId, task.NameTask, task.DescriptionTask).Scan(&task.Id); err != nil {
+		var pgErr *pgconn.PgError
+		if errors.Is(err, pgErr) {
+			pgErr = err.(*pgconn.PgError)
+			newErr := fmt.Errorf(fmt.Sprintf("SQL Error: %s,Detail: %s, Where: %s", pgErr.Error(), pgErr.Detail, pgErr.Where))
+			fmt.Println(newErr)
+			return 0, nil
+		}
+		return 0, err
+	}
+	return task.Id, nil
 
 }
 
@@ -79,15 +106,16 @@ func (r *accountRepository) UpdateNameTask(ctx context.Context, task *entity.Tas
 }
 
 //TODO Change userID on accountID
-func (r *accountRepository) GetTask(ctx context.Context, userID int) ([]string, []string, error) {
+func (r *accountRepository) GetTask(ctx context.Context, userID string) ([]string, []string, []string, error) {
 
-	query := `SELECT name_task , description_task
+	query := `SELECT id ,name_task , description_task
 					FROM tasks
-				WHERE account_id = $1`
+				WHERE user_id = $1`
 
 	rows, err := r.db.Query(ctx, query, userID)
+
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 	defer rows.Close()
 
@@ -96,20 +124,22 @@ func (r *accountRepository) GetTask(ctx context.Context, userID int) ([]string, 
 	for rows.Next() {
 
 		var task entity.Task
-		err := rows.Scan(&task.NameTask, &task.DescriptionTask)
+		err := rows.Scan(&task.Id, &task.NameTask, &task.DescriptionTask)
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, nil, err
 		}
 		tasks = append(tasks, task)
 	}
+	var id []string
 	var name []string
 	var descriptions []string
 
 	for _, task := range tasks {
+		id = append(id, strconv.Itoa(task.Id))
 		name = append(name, task.NameTask)
 		descriptions = append(descriptions, task.DescriptionTask)
 	}
-	return name, descriptions, nil
+	return id, name, descriptions, nil
 }
 
 func (r *accountRepository) AddEmail(ctx context.Context) error {

@@ -27,6 +27,7 @@ func NewAccountHandler(service *usecase.Service) handlers.Handler {
 type Task struct {
 	Name        string
 	Description string
+	Id          string
 }
 
 func (h *handler) Register(router *httprouter.Router) {
@@ -34,6 +35,7 @@ func (h *handler) Register(router *httprouter.Router) {
 
 	router.POST("/dashboard/add", h.AddTask)
 	router.GET("/dashboard", apperror.AuthMiddleware(h.GetTask))
+	router.DELETE("/dashboard/delete", h.DeleteTask)
 }
 
 func (h *handler) GetTask(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -46,17 +48,25 @@ func (h *handler) GetTask(w http.ResponseWriter, r *http.Request, p httprouter.P
 		return
 	}
 	//get username from cookie for transfers to html
-	cookie, err := r.Cookie("username")
+	cookieUN, err := r.Cookie("username")
 	if err != nil {
-		log.Fatalf("failed to get cookie")
+		log.Fatalf("failed to get cookie %v", err)
 		return
 	}
-	cookieUsername := cookie.Value
+	cookieUserID, err := r.Cookie("id")
+	if err != nil {
+		log.Fatalf("failed to get cookie %v", err)
+		return
+	}
+	cookieID := cookieUserID.Value
+	cookieUsername := cookieUN.Value
 
-	q := r.URL.Query()
-	userID, _ := strconv.Atoi(q.Get("id"))
+	//q := r.URL.Query()
+	//userID := q.Get("id")
+	//
+	//fmt.Println(userID)
 
-	name, description, err := h.service.GetTask(r.Context(), userID)
+	id, name, description, err := h.service.GetTask(r.Context(), cookieID)
 	if name != nil || description != nil {
 		if err != nil {
 			log.Printf("failed with get task in handler %v", err)
@@ -70,7 +80,7 @@ func (h *handler) GetTask(w http.ResponseWriter, r *http.Request, p httprouter.P
 
 		tasks := []Task{}
 		for i, name := range name {
-			tasks = append(tasks, Task{Name: name, Description: description[i]})
+			tasks = append(tasks, Task{Name: name, Description: description[i], Id: id[i]})
 		}
 
 		data := DataUser{
@@ -78,7 +88,9 @@ func (h *handler) GetTask(w http.ResponseWriter, r *http.Request, p httprouter.P
 			Username: cookieUsername,
 		}
 
-		err = tmpl.Execute(w, data)
+		err = tmpl.Execute(w, map[string]interface{}{
+			"withFields": data,
+		})
 		if err != nil {
 			log.Fatalf("COULD NOT EXECUTE %v", err)
 			http.Error(w, err.Error(), 400)
@@ -94,7 +106,9 @@ func (h *handler) GetTask(w http.ResponseWriter, r *http.Request, p httprouter.P
 			Username: cookieUsername,
 		}
 
-		err = tmpl.Execute(w, data)
+		err = tmpl.Execute(w, map[string]interface{}{
+			"withFields": data,
+		})
 		if err != nil {
 			log.Fatalf("COULD NOT EXECUTE %v", err)
 			http.Error(w, err.Error(), 400)
@@ -105,7 +119,13 @@ func (h *handler) GetTask(w http.ResponseWriter, r *http.Request, p httprouter.P
 }
 
 func (h *handler) AddTask(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	log.Printf("Handling UpdateDescriptionTask request with parameters: %v", p)
+	log.Printf("Handling AddDescriptionTask request with parameters: %v", p)
+
+	path := filepath.Join("public", "index2.html")
+	tmpl, _ := template.ParseFiles(path)
+
+	descriptionName := r.FormValue("descriptionName")
+	description := r.FormValue("description")
 
 	err := r.ParseForm()
 	if err != nil {
@@ -113,33 +133,51 @@ func (h *handler) AddTask(w http.ResponseWriter, r *http.Request, p httprouter.P
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	descriptionName := r.FormValue("descriptionName")
-	description := r.FormValue("description")
 
-	//q := r.URL.Query()
-	//userID, err := strconv.Atoi(q.Get("id"))
-	//if err != nil || userID <= 1 {
-	//	log.Printf("failed to get id from url in account/handler %v", err)
-	//	http.NotFound(w, r)
-	//	return
-	//}
-	//fmt.Println(userID)
+	cookieUserID, err := r.Cookie("id")
+	if err != nil {
+		log.Fatalf("failed to get cookie %v", err)
+		return
+	}
+	cookieID := cookieUserID.Value
 
 	task := &entity.Task{
-		AccountId:       2,
+		AccountId:       cookieID,
 		NameTask:        descriptionName,
 		DescriptionTask: description,
 	}
 
-	err = h.service.CreateTask(r.Context(), task)
+	id, err := h.service.CreateTask(r.Context(), task)
 	if err != nil {
 		fmt.Printf("failed to add taks %v", err)
 		return
 	}
 
-	//q := url.Values{}
-	//q.Add("id", strconv.Itoa(2))
-	//url := fmt.Sprintf("/dashboard?%s", q.Encode())
-	//
-	//http.Redirect(w, r, url, http.StatusSeeOther)
+	task.Id = id
+	err = tmpl.Execute(w, map[string]interface{}{
+		"taskID": task,
+	})
+	if err != nil {
+		log.Fatalf("COULD NOT EXECUTE %v", err)
+		http.Error(w, err.Error(), 400)
+		return
+	}
+}
+
+func (h *handler) DeleteTask(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	log.Printf("Handling DeleteDescriptionTask request with parameters: %v", p)
+
+	id := r.FormValue("taskId")
+
+	taskID, err := strconv.Atoi(id)
+	if err != nil {
+		log.Printf("failed to converti in int %v", nil)
+		return
+	}
+	task := &entity.Task{
+		Id: taskID,
+	}
+
+	h.service.DeleteTask(r.Context(), task)
+
 }

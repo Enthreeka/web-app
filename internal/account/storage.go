@@ -6,10 +6,11 @@ import (
 )
 
 type Repository interface {
-	CreateTask(ctx context.Context, task *entity.Task) error
+	DeleteTask(ctx context.Context, taskID int) error
+	CreateTask(ctx context.Context, task *entity.Task) (int, error)
 	UpdateDescriptionTask(ctx context.Context, task *entity.Task) error
 	UpdateNameTask(ctx context.Context, task *entity.Task) error
-	GetTask(ctx context.Context, userID int) ([]string, []string, error)
+	GetTask(ctx context.Context, userID string) ([]string, []string, []string, error)
 	UpdateName(ctx context.Context, account *entity.Account, id int) error
 	AddEmail(ctx context.Context) error
 	AddPhoto(ctx context.Context) error

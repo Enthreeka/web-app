@@ -711,6 +711,13 @@ window.onload = function() {
       deleteTaskHandler(mainItems[i]);
     };
   }
+let btnsDel = document.querySelectorAll('.main__view__content__list__item__button__done');
+btnsDel.forEach(btn => {
+  btn.addEventListener("click", (e) => {
+    let taskId = btn.closest('form')
+    formDel(e,taskId)
+});
+});
 }
 
 const mobileMenuButton = document.querySelector('.header__navigation__left__burger__settings');
@@ -1087,4 +1094,14 @@ async function formSend(e,form) { //сама функция
         });
           mainTaskDescription.value = '';
           mainTaskSubDescriptionInput.value = '';
+}
+async function formDel(e,form) { //сама функция
+    e.preventDefault();
+    let formData = new FormData(form)
+    console.log(form)
+      form.classList.add('_sending');
+        let response = await fetch('/dashboard/delete' ,{
+            method: 'DELETE',
+            body: formData, // тут по идеи должны быть инпуты
+        });
 }

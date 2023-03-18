@@ -10,5 +10,5 @@ type Repository interface {
 	CreateAccount(ctx context.Context, account *entity.Account) error
 	GetUser(ctx context.Context, login string, password string) (*entity.User, error)
 	FindAll(ctx context.Context) ([]entity.User, error)
-	UpdateToken(ctx context.Context, tokenID string, userID int) error
+	UpdateToken(ctx context.Context, tokenID string, userID string) error
 }

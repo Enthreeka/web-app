@@ -77,7 +77,7 @@ func (s *Service) LogIn(ctx context.Context, login string, password string) (ent
 	return *user, nil
 }
 
-func (s *Service) GenerateToken(ctx context.Context, userID int) (string, error) {
+func (s *Service) GenerateToken(ctx context.Context, userID string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": userID,
 		"exp": time.Now().Add(time.Hour * 24).Unix(),

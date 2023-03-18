@@ -1,6 +1,8 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 create table users
 (
-    id int generated always as identity ,
+    id uuid DEFAULT uuid_generate_v4(),
     login varchar(100) not null unique ,
     password varchar(200) not null,
     token varchar(200) DEFAULT 0,
@@ -11,8 +13,8 @@ create table users
 
 create table account
 (
-    id int  generated always as identity,
-    user_id int,
+    id int generated always as identity,
+    user_id uuid,
     name varchar(50) constraint users_name null,
     email varchar(100) null ,
     photo varchar(200) null ,
@@ -27,15 +29,15 @@ create table account
 
 create table tasks
 (
-    id int generated always as identity,
-    account_id int,
+    id int generated always as identity ,
+    user_id uuid,
     name_task varchar(250) null ,
     description_task text null,
     date_task date constraint date_create_task DEFAULT now(),
     primary key (id),
     constraint fk_account
-        foreign key (account_id)
-            references account (id)
+        foreign key (user_id)
+            references users (id)
 );
 
 -- CREATE TABLE tokens
@@ -52,7 +54,7 @@ create table tasks
 -- );
 
 --n3ksmirn = 1fsdjhj123hhjd
---ilisTopskiy = ;;1afkasfo34
+    --ilisTopskiy = ;;1afkasfo34
 --
 
 INSERT INTO tasks
@@ -61,9 +63,14 @@ VALUES
     (2,'Тест имени','Тест')
 RETURNING id;
 
+insert into tasks (account_id, name_task, description_task) values (1,'gqfz3123','gola123fasng');
 
-
+delete from tasks where account_id= 2;
 
 SELECT name_task , description_task
 FROM tasks
 WHERE account_id = 2;
+
+drop table tasks;
+drop table account;
+drop table users;
