@@ -1120,7 +1120,7 @@ async function formLeave(form) { //сама функция
     console.log(form)
       form.classList.add('_sending');
         let response = await fetch('/dashboard/leave' ,{
-            method: 'PATCH',
+            method: 'POST',
             body: formData, // тут по идеи должны быть инпуты
         });
 }

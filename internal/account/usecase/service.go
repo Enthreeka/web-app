@@ -17,6 +17,17 @@ func NewAccountService(repository account.Repository) *Service {
 	}
 }
 
+func (s *Service) Leave(ctx context.Context, userID string) error {
+
+	err := s.repository.SetNullToken(ctx, userID)
+	if err != nil {
+		log.Fatalf("failed to set null in service %v", err)
+		return err
+	}
+
+	return nil
+}
+
 func (s *Service) DeleteTask(ctx context.Context, task *entity.Task) error {
 
 	err := s.repository.DeleteTask(ctx, task.Id)

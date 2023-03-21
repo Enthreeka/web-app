@@ -10,4 +10,5 @@ type Service interface {
 	CreateTask(ctx context.Context, task *entity.Task) (int, error)
 	UpdateTask(ctx context.Context, task *entity.Task) error
 	GetTask(ctx context.Context, userID string) ([]string, []string, []string, error)
+	Leave(ctx context.Context, userID string) error
 }

@@ -30,16 +30,24 @@ type Task struct {
 	Id          string
 }
 
+const (
+	dashboard = "/dashboard"
+	add       = "/dashboard/add"
+	delete    = "/dashboard/delete"
+	logout    = "/dashboard/leave"
+	startPage = "/"
+)
+
 func (h *handler) Register(router *httprouter.Router) {
 	log.Println("Registering account routes...")
 
-	router.POST("/dashboard/add", h.AddTask)
-	router.GET("/dashboard", apperror.AuthMiddleware(h.GetTask))
-	router.DELETE("/dashboard/delete", h.DeleteTask)
+	router.GET(dashboard, apperror.AuthMiddleware(h.GetTask))
+	router.POST(add, h.AddTask)
+	router.DELETE(delete, h.DeleteTask)
+	router.POST(logout, h.logoutHandler)
 }
 
 func (h *handler) GetTask(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-
 	log.Printf("Handling GetTask request with parameters: %v", p)
 	path := filepath.Join("public", "index2.html")
 	tmpl, err := template.ParseFiles(path)
@@ -60,11 +68,6 @@ func (h *handler) GetTask(w http.ResponseWriter, r *http.Request, p httprouter.P
 	}
 	cookieID := cookieUserID.Value
 	cookieUsername := cookieUN.Value
-
-	//q := r.URL.Query()
-	//userID := q.Get("id")
-	//
-	//fmt.Println(userID)
 
 	id, name, description, err := h.service.GetTask(r.Context(), cookieID)
 	if name != nil || description != nil {
@@ -180,5 +183,33 @@ func (h *handler) DeleteTask(w http.ResponseWriter, r *http.Request, p httproute
 	}
 
 	h.service.DeleteTask(r.Context(), task)
+}
+
+func (h *handler) logoutHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+
+	log.Println("Handling logoutHandler request")
+
+	cookieUserID, err := r.Cookie("id")
+	if err != nil {
+		log.Fatalf("failed to get cookie %v", err)
+		return
+	}
+	cookieID := cookieUserID.Value
+
+	err = h.service.Leave(r.Context(), cookieID)
+	if err != nil {
+		log.Fatalf("failed to set null to jwt token %v", err)
+		return
+	}
+
+	cookie := &http.Cookie{
+		Name:   "jwt",
+		Value:  "",
+		Path:   "/",
+		MaxAge: -1,
+	}
+	http.SetCookie(w, cookie)
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 
 }

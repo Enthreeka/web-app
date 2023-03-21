@@ -11,6 +11,7 @@ type Repository interface {
 	UpdateDescriptionTask(ctx context.Context, task *entity.Task) error
 	UpdateNameTask(ctx context.Context, task *entity.Task) error
 	GetTask(ctx context.Context, userID string) ([]string, []string, []string, error)
+	SetNullToken(ctx context.Context, userID string) error
 	//UpdateName(ctx context.Context, account *entity.Account, id int) error
 	//AddEmail(ctx context.Context) error
 	//AddPhoto(ctx context.Context) error

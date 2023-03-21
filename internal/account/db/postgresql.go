@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"log"
 	"strconv"
 	"web/internal/account"
 	"web/internal/entity"
@@ -24,6 +25,20 @@ func NewAccountRepository(db *pgxpool.Pool) account.Repository {
 //
 //	return taskID, nil
 //}
+
+func (r *accountRepository) SetNullToken(ctx context.Context, userID string) error {
+	query := `UPDATE users
+				SET token = 0
+					WHERE id = $1`
+
+	_, err := r.db.Exec(ctx, query, userID)
+	if err != nil {
+		log.Fatalf("failed to set null to token: %v", err)
+		return fmt.Errorf("failed to set null to token: %v", err)
+	}
+
+	return nil
+}
 
 func (r *accountRepository) DeleteTask(ctx context.Context, taskID int) error {
 	var task entity.Task

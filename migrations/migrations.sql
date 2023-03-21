@@ -57,19 +57,7 @@ create table tasks
     --ilisTopskiy = ;;1afkasfo34
 --
 
-INSERT INTO tasks
-(account_id,name_task,description_task)
-VALUES
-    (2,'Тест имени','Тест')
-RETURNING id;
 
-insert into tasks (account_id, name_task, description_task) values (1,'gqfz3123','gola123fasng');
-
-delete from tasks where account_id= 2;
-
-SELECT name_task , description_task
-FROM tasks
-WHERE account_id = 2;
 
 drop table tasks;
 drop table account;
