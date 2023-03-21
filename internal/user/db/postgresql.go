@@ -19,6 +19,20 @@ func NewUserRepository(db *pgxpool.Pool) user.Repository {
 	return &userRepository{db: db}
 }
 
+func (r *userRepository) SetNullToken(ctx context.Context, userID string) error {
+	query := `UPDATE users
+				SET token = 0
+					WHERE user_id = $1`
+
+	_, err := r.db.Exec(ctx, query, userID)
+	if err != nil {
+		log.Fatalf("failed to set null to token: %v", err)
+		return fmt.Errorf("failed to set null to token: %v", err)
+	}
+
+	return nil
+}
+
 func (r *userRepository) CreateUser(ctx context.Context, user *entity.User) (*entity.User, error) {
 	query := `INSERT INTO users 
 				 (login, password ) 

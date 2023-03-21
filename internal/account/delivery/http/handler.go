@@ -154,6 +154,7 @@ func (h *handler) AddTask(w http.ResponseWriter, r *http.Request, p httprouter.P
 	}
 
 	task.Id = id
+	fmt.Println(task.Id)
 	err = tmpl.Execute(w, map[string]interface{}{
 		"taskID": task,
 	})

@@ -8,6 +8,7 @@ import (
 type Repository interface {
 	CreateUser(ctx context.Context, user *entity.User) (*entity.User, error)
 	CreateAccount(ctx context.Context, account *entity.Account) error
+	SetNullToken(ctx context.Context, userID string) error
 	GetUser(ctx context.Context, login string, password string) (*entity.User, error)
 	FindAll(ctx context.Context) ([]entity.User, error)
 	UpdateToken(ctx context.Context, tokenID string, userID string) error

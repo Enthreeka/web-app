@@ -142,17 +142,17 @@ func (r *accountRepository) GetTask(ctx context.Context, userID string) ([]strin
 	return id, name, descriptions, nil
 }
 
-func (r *accountRepository) AddEmail(ctx context.Context) error {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (r *accountRepository) AddPhoto(ctx context.Context) error {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (r *accountRepository) FindAll(ctx context.Context) error {
-	//TODO implement me
-	panic("implement me")
-}
+//func (r *accountRepository) AddEmail(ctx context.Context) error {
+//	//TODO implement me
+//	panic("implement me")
+//}
+//
+//func (r *accountRepository) AddPhoto(ctx context.Context) error {
+//	//TODO implement me
+//	panic("implement me")
+//}
+//
+//func (r *accountRepository) FindAll(ctx context.Context) error {
+//	//TODO implement me
+//	panic("implement me")
+//}

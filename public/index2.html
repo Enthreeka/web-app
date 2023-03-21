@@ -98,8 +98,9 @@
             </li>
 
             <li class="header__right__user__popup__list__item sign-out">
-                <form>
-                <a href="#!" class="header__right__user__popup__list__item__sign-out__link">Выйти</a>
+                <form action="/dashboard/leave" method="patch">
+                <div class="header__right__user__popup__list__item__sign-out__link">Выйти</div>
+<!--                    <button class="header__right__user__popup__list__item__sign-out__link" >Выйти</button>-->
                 </form>
             </li>
         </ul>
@@ -400,7 +401,7 @@
             <span class="main__view__content__list__item__span__sub__desc"></span>
             <form action="/dashboard/delete" method="delete">
                 <button class="main__view__content__list__item__button__done" type="button"></button>
-                <input type="hidden" name="taskId" value="{{.taskID.Id}}">
+                <input type="hidden" name="taskId" value=" {{.taskID.Id}}">
             </form>
             <i class="fas fa-bars"></i>
             <div class="maiv__view__content__list__item__bottom__bar">
@@ -409,7 +410,6 @@
             </div>
         </li>
     </template>
-
 
     <template class="main__tasks__template__date">
         <li class="main__view__content__list__item__date">

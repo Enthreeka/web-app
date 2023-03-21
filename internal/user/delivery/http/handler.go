@@ -46,12 +46,27 @@ func (h *handler) Register(router *httprouter.Router) {
 	router.GET(startPage, h.StartPage)
 	router.POST(login, h.Login)
 	router.POST(signup, h.SignUp)
-	//router.PATCH(leave, h.LeaveFromAccount)
+	router.PATCH(leave, h.LeaveFromAccount)
 
-	//	router.GET(dashboard, apperror.AuthMiddleware(h.AccountPage))
+	//router.GET(dashboard, apperror.AuthMiddleware(h.AccountPage))
 }
 
 func (h *handler) LeaveFromAccount(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	log.Println("Handling LeaveFromAccount request")
+
+	cookieUserID, err := r.Cookie("id")
+	if err != nil {
+		log.Fatalf("failed to get cookie %v", err)
+		return
+	}
+	cookieID := cookieUserID.Value
+
+	err = h.service.Leave(r.Context(), cookieID)
+	if err != nil {
+		log.Fatalf("failed to set null to jwt token %v", err)
+		return
+	}
+	http.Redirect(w, r, startPage, http.StatusSeeOther)
 
 }
 

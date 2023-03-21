@@ -1105,3 +1105,22 @@ async function formDel(e,form) { //сама функция
             body: formData, // тут по идеи должны быть инпуты
         });
 }
+
+const leveaBtn = document.querySelector(".header__right__user__popup__list__item__sign-out__link")
+
+leveaBtn.onclick = function(e){
+let form = leveaBtn.closest("form")
+console.log(form)
+formLeave(form)
+
+}
+
+async function formLeave(form) { //сама функция
+    let formData = new FormData(form)
+    console.log(form)
+      form.classList.add('_sending');
+        let response = await fetch('/dashboard/leave' ,{
+            method: 'PATCH',
+            body: formData, // тут по идеи должны быть инпуты
+        });
+}

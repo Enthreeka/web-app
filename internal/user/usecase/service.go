@@ -23,6 +23,17 @@ func NewUserService(repository user.Repository) *Service {
 	}
 }
 
+func (s *Service) Leave(ctx context.Context, userID string) error {
+
+	err := s.repository.SetNullToken(ctx, userID)
+	if err != nil {
+		log.Fatalf("failed to set null in service %v", err)
+		return err
+	}
+
+	return nil
+}
+
 func (s *Service) SignUp(ctx context.Context, user *entity.User) (*entity.User, error) {
 	hasedBytes := string(HashPassword(user.Login, user.Password))
 	user.Password = hasedBytes
