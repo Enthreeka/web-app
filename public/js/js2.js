@@ -1044,6 +1044,7 @@ const myChart = new Chart(ctx, {
     }
   });
 
+
 // <----------------------------- TIPS ------------------------------->
 
 const productivityTipButton = document.querySelector('.productivity-tip__close-button');
@@ -1106,14 +1107,33 @@ async function formDel(e,form) { //сама функция
         });
 }
 
+ const saveBtn = document.querySelector('.save-name');
+
+  saveBtn.addEventListener('click', function() {
+    let from = saveBtn.closest('form')
+    let input = from.querySelector('input')
+    const value = input.value;
+
+
+        console.log(value)
+        fetch('/dashboard/update/name', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({value})
+        });
+
+  });
+
 const leveaBtn = document.querySelector(".header__right__user__popup__list__item__sign-out__link")
 
 leveaBtn.onclick = function(e){
 let form = leveaBtn.closest("form")
 console.log(form)
 formLeave(form)
-
 }
+
 
 async function formLeave(form) { //сама функция
     let formData = new FormData(form)
@@ -1121,6 +1141,24 @@ async function formLeave(form) { //сама функция
       form.classList.add('_sending');
         let response = await fetch('/dashboard/leave' ,{
             method: 'POST',
+            body: formData, // тут по идеи должны быть инпуты
+        });
+}
+
+const editBtn = document.querySelector(".main__view__content__form__edit__button")
+
+editBtn.onclick = function(e){
+let form = editBtn.closest("form")
+console.log(form)
+formEdit(form)
+}
+
+async function formEdit(form) { //сама функция
+    let formData = new FormData(form)
+    console.log(form)
+      form.classList.add('_sending');
+        let response = await fetch('/dashboard/edit' ,{
+            method: 'PUT',
             body: formData, // тут по идеи должны быть инпуты
         });
 }

@@ -58,6 +58,9 @@ create table tasks
 --
 
 
+UPDATE account SET name  = 'Никита' WHERE id = 1;
+
+
 
 drop table tasks;
 drop table account;

@@ -20,11 +20,74 @@ func NewAccountRepository(db *pgxpool.Pool) account.Repository {
 	return &accountRepository{db: db}
 }
 
-//func (r *accountRepository) GetTaskForDelete(ctx context.Context, task *entity.Task) ([]entity.Task, error) {
-//	query := `SELECT`
-//
-//	return taskID, nil
-//}
+func (r *accountRepository) GetName(ctx context.Context, userID string) (string, error) {
+
+	query := `SELECT name 	
+		          FROM account 
+                  WHERE user_id = $1`
+
+	var account entity.Account
+
+	err := r.db.QueryRow(ctx, query, userID).Scan(&account.Name)
+	if err != nil {
+		pgErr, ok := err.(*pgconn.PgError)
+		if ok {
+			newErr := fmt.Errorf("SQL Error: %s, Detail: %s, Where: %s", pgErr.Error(), pgErr.Detail, pgErr.Where)
+			fmt.Println(newErr)
+			return "", newErr
+		}
+		return "", err
+	}
+	return account.Name, nil
+}
+
+func (r *accountRepository) UpdateNameUser(ctx context.Context, userID string, name string) error {
+	query := `UPDATE account 
+				SET name = $1
+				WHERE user_id = $2`
+
+	_, err := r.db.Exec(ctx, query, name, userID)
+	if err != nil {
+		log.Fatalf("failed to update name: %v", err)
+		return fmt.Errorf("failed to set null to token: %v", err)
+	}
+	return nil
+}
+
+func (r *accountRepository) GetTask(ctx context.Context, id int) (string, string, error) {
+	query := `SELECT name_task, description_task 	
+		          FROM tasks 
+                  WHERE id = $1`
+
+	var task entity.Task
+
+	err := r.db.QueryRow(ctx, query, id).Scan(&task.NameTask, &task.DescriptionTask)
+	if err != nil {
+		pgErr, ok := err.(*pgconn.PgError)
+		if ok {
+			newErr := fmt.Errorf("SQL Error: %s, Detail: %s, Where: %s", pgErr.Error(), pgErr.Detail, pgErr.Where)
+			fmt.Println(newErr)
+			return "", "", newErr
+		}
+		return "", "", err
+	}
+	return task.NameTask, task.DescriptionTask, nil
+}
+
+func (r *accountRepository) UpdateTask(ctx context.Context, id string) error {
+
+	query := `UPDATE tasks
+		SET name_task = $1 
+			WHERE id = $2`
+	var task entity.Task
+
+	_, err := r.db.Exec(ctx, query, task.NameTask, id)
+	if err != nil {
+		log.Fatalf("failed to update task: %v", err)
+		return fmt.Errorf("failed to set null to token: %v", err)
+	}
+	return nil
+}
 
 func (r *accountRepository) SetNullToken(ctx context.Context, userID string) error {
 	query := `UPDATE users
@@ -96,32 +159,31 @@ func (r *accountRepository) UpdateName(ctx context.Context, account *entity.Acco
 	return nil
 
 }
-func (r *accountRepository) UpdateDescriptionTask(ctx context.Context, task *entity.Task) error {
+func (r *accountRepository) UpdateDescriptionTask(ctx context.Context, descriptionTask string, id int) error {
 	query := `UPDATE tasks
 			SET description_task = $1
-			WHERE account_id = $2`
+			WHERE id = $2`
 
-	_, err := r.db.Exec(ctx, query, task.DescriptionTask, task.AccountId)
+	_, err := r.db.Exec(ctx, query, descriptionTask, id)
 	if err != nil {
 		fmt.Printf("ERROR - %v", err)
 	}
 	return nil
 }
 
-func (r *accountRepository) UpdateNameTask(ctx context.Context, task *entity.Task) error {
+func (r *accountRepository) UpdateNameTask(ctx context.Context, nameTask string, id int) error {
 	query := `UPDATE tasks
 			SET name_task = $1
-			WHERE account_id = $2`
+			WHERE id = $2`
 
-	_, err := r.db.Exec(ctx, query, task.NameTask, task.AccountId)
+	_, err := r.db.Exec(ctx, query, nameTask, id)
 	if err != nil {
 		fmt.Printf("ERROR - %v", err)
 	}
 	return nil
 }
 
-//TODO Change userID on accountID
-func (r *accountRepository) GetTask(ctx context.Context, userID string) ([]string, []string, []string, error) {
+func (r *accountRepository) GetTasks(ctx context.Context, userID string) ([]string, []string, []string, error) {
 
 	query := `SELECT id ,name_task , description_task
 					FROM tasks
@@ -156,18 +218,3 @@ func (r *accountRepository) GetTask(ctx context.Context, userID string) ([]strin
 	}
 	return id, name, descriptions, nil
 }
-
-//func (r *accountRepository) AddEmail(ctx context.Context) error {
-//	//TODO implement me
-//	panic("implement me")
-//}
-//
-//func (r *accountRepository) AddPhoto(ctx context.Context) error {
-//	//TODO implement me
-//	panic("implement me")
-//}
-//
-//func (r *accountRepository) FindAll(ctx context.Context) error {
-//	//TODO implement me
-//	panic("implement me")
-//}

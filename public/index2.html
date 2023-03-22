@@ -159,12 +159,18 @@
                         <p class="header__right__user__settings__popup__content__right__account__photo__paragraph">Фото</p>
                         <div class="header__right__user__settings__popup__content__right__account__photo__lower">
                             <img src="/public/images/user-default.svg" alt="user-avatar" width="50" height="50">
-                            <button class="header__right__user__settings__popup__content__right__account__photo__lower__button">Загрузить фото</button>
+<!--                            <button class="header__right__user__settings__popup__content__right__account__photo__lower__button">Загрузить фото</button>-->
+                            <form action="/dashboard/image" method="post">
+                            <input class="header__right__user__settings__popup__content__right__account__photo__lower__button" type="file" id="file-input" accept="image/*">
+                            </form>
                         </div>
                     </div>
                     <div class="header__right__user__settings__popup__content__right__account__name">
                         <p class="header__right__user__settings__popup__content__right__account__name__paragraph">Имя</p>
-                        <input type="text" class="header__right__user__settings__popup__content__right__account__name__input">
+                        <form>
+                            <input type="text" class="header__right__user__settings__popup__content__right__account__name__input" value="{{.inforamtionAccount.Name}}">
+                            <button type="submit" class="save-name">Сохрнаить</button>
+                        </form>
                     </div>
                     <div class="header__right__user__settings__popup__content__right__account__email">
                         <p class="header__right__user__settings__popup__content__right__account__user__email">Sanya_harosh@gmail.com</p>
@@ -365,15 +371,19 @@
                         <li class="main__view__content__list__item item default">
                             <span class="main__view__content__list__item__span__desc"  contenteditable="false">{{.Name }}</span>
                             <span class="main__view__content__list__item__span__sub__desc" contenteditable="false">{{.Description}}</span>
-                            <form action="/dashboard/delete" method="delete">
+                            <form action="/dashboard/delete" method="">
                             <button class="main__view__content__list__item__button__done" type="submit"></button>
                                 <input type="hidden" name="taskId" value="{{.Id}}">
-
                             </form>
                             <i class="fas fa-bars"></i>
                             <div class="maiv__view__content__list__item__bottom__bar">
-                                <button class="main__view__content__form__important"></button>
+                                <form action="/dashboard/edit" method="PUT">
+                                <div class="main__view__content__form__important"></div>
                                 <button class="main__view__content__form__edit__button"></button>
+                                    <input type="hidden" name="taskId" value="{{.Id}}">
+<!--                                    <input type="hidden" name="taskName" value="{{.Name}}">-->
+<!--                                    <input type="hidden" name="taskDescription" value="{{.Description}}">-->
+                                </form>
                             </div>
                         </li>
                         {{end}}
@@ -382,7 +392,7 @@
                     <form class="main__view__content__form" action="/dashboard/add" method="post">
                         <textarea class="main__view__content__form__task__description" maxlength="350" placeholder="Название задачи" name="descriptionName"></textarea>
                         <textarea class="main__view__content__form__task__sub__description" placeholder="Описание"  maxlength="500" name="description" ></textarea>
-<!--                         <div class="main__view__content__form__button__clean">Очистить</div>-->
+                        <div class="main__view__content__form__button__clean">Очистить</div>
                         <button class="main__view__content__form__button__add" >Добавить задачу</button>
                     </form>
                 </div>
