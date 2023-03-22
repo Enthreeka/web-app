@@ -20,6 +20,18 @@ func NewAccountRepository(db *pgxpool.Pool) account.Repository {
 	return &accountRepository{db: db}
 }
 
+func (r *accountRepository) AddByneriPhoto(ctx context.Context, userID string, imgByte []byte) error {
+	query := `UPDATE account
+				SET photo = $1
+					WHERE user_id = $2`
+
+	_, err := r.db.Exec(ctx, query, imgByte, userID)
+	if err != nil {
+		fmt.Printf("ERROR - %v", err)
+	}
+	return nil
+}
+
 func (r *accountRepository) GetName(ctx context.Context, userID string) (string, error) {
 
 	query := `SELECT name 	

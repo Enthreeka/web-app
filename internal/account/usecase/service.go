@@ -17,6 +17,17 @@ func NewAccountService(repository account.Repository) *Service {
 	}
 }
 
+func (s *Service) AddPhoto(ctx context.Context, userID string, imgByte []byte) error {
+
+	err := s.repository.AddByneriPhoto(ctx, userID, imgByte)
+	if err != nil {
+		log.Printf("failed to add photo in db %v", err)
+		return err
+	}
+
+	return nil
+}
+
 func (s *Service) GetName(ctx context.Context, userID string) (string, error) {
 
 	name, err := s.repository.GetName(ctx, userID)

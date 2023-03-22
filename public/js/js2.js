@@ -1107,13 +1107,32 @@ async function formDel(e,form) { //сама функция
         });
 }
 
+const imageLoad = document.querySelector(".load-image-file")
+
+imageLoad.addEventListener('input', function(e){
+let form = imageLoad.closest("form")
+            formImage(form)
+})
+
+
+
+async function formImage(form) { //сама функция
+    let formData = new FormData(form)
+    console.log(form)
+
+      form.classList.add('_sending');
+        let response = await fetch('/dashboard/image' ,{
+            method: 'POST',
+            body: formData, // тут по идеи должны быть инпуты
+        });
+}
+
  const saveBtn = document.querySelector('.save-name');
 
   saveBtn.addEventListener('click', function() {
     let from = saveBtn.closest('form')
     let input = from.querySelector('input')
     const value = input.value;
-
 
         console.log(value)
         fetch('/dashboard/update/name', {

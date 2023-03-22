@@ -41,6 +41,7 @@ const (
 	logout    = "/dashboard/leave"
 	edit      = "/dashboard/edit"
 	saveName  = "/dashboard/update/name"
+	SaveImage = "/dashboard/image"
 )
 
 func (h *handler) Register(router *httprouter.Router) {
@@ -52,7 +53,7 @@ func (h *handler) Register(router *httprouter.Router) {
 	router.POST(logout, h.logoutHandler)
 	router.PUT(edit, h.EditHandler)
 	router.POST(saveName, h.SaveNameHandler)
-	//	router.GET(dashboard, h.GetAccountInformationHandler)
+	router.POST(SaveImage, h.ImageHandler)
 }
 
 func (h *handler) GetTask(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -319,4 +320,43 @@ func (h *handler) SaveNameHandler(w http.ResponseWriter, r *http.Request, p http
 			return
 		}
 	}
+}
+
+func (h *handler) ImageHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	log.Println("Handling ImageHandler request")
+
+	err := r.ParseMultipartForm(32 << 20) // максимальный размер 32MB
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+
+	file, _, err := r.FormFile("file")
+	if err != nil {
+		log.Printf("failed ti get file from form %v", err)
+		return
+	}
+	defer file.Close()
+
+	imgBytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	cookieUserID, err := r.Cookie("id")
+	if err != nil {
+		log.Fatalf("failed to get cookie %v", err)
+		return
+	}
+	userID := cookieUserID.Value
+
+	err = h.service.AddPhoto(r.Context(), userID, imgBytes)
+	if err != nil {
+		log.Println("failed to add photo %v", err)
+		return
+	}
+
+	fmt.Println(imgBytes)
+
 }

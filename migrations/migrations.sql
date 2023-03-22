@@ -17,7 +17,7 @@ create table account
     user_id uuid,
     name varchar(50) constraint users_name null,
     email varchar(100) null ,
-    photo varchar(200) null ,
+    photo BYTEA null ,
     subscribe boolean null ,
     date_signup date DEFAULT now(),
     primary key (id),
@@ -39,6 +39,7 @@ create table tasks
         foreign key (user_id)
             references users (id)
 );
+
 
 -- CREATE TABLE tokens
 -- (
