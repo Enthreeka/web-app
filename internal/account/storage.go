@@ -17,4 +17,5 @@ type Repository interface {
 	UpdateNameUser(ctx context.Context, userID string, name string) error
 	GetName(ctx context.Context, userID string) (string, error)
 	AddByneriPhoto(ctx context.Context, userID string, imgByte []byte) error
+	GetByneriPhoto(ctx context.Context, userID string) ([]byte, error)
 }

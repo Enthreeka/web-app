@@ -1,8 +1,14 @@
 package usecase
 
 import (
+	"bytes"
 	"context"
+	"encoding/base64"
+	"image"
+	"image/jpeg"
+	"image/png"
 	"log"
+	"net/http"
 	"web/internal/account"
 	"web/internal/entity"
 )
@@ -15,6 +21,57 @@ func NewAccountService(repository account.Repository) *Service {
 	return &Service{
 		repository: repository,
 	}
+}
+func detectPhotoFormat(b []byte) (string, error) {
+	contentType := http.DetectContentType(b)
+	return contentType, nil
+}
+
+func (s *Service) GetPhoto(ctx context.Context, userID string) (string, error) {
+
+	photoBytes, err := s.repository.GetByneriPhoto(ctx, userID)
+	if err != nil {
+		log.Printf("failed to get photo in service ERROR: %v", err)
+		return "", err
+	}
+
+	foramt, err := detectPhotoFormat(photoBytes)
+	if err != nil {
+		log.Printf("failed to detect photo format")
+		return "", err
+	}
+
+	var buf bytes.Buffer
+
+	img, _, err := image.Decode(bytes.NewReader(photoBytes))
+	if err != nil {
+		log.Println(err)
+	}
+
+	switch foramt {
+	case "image/jpeg":
+		err = jpeg.Encode(&buf, img, nil)
+		if err != nil {
+			log.Println(err)
+		}
+
+		imgSrc := "data:image/jpeg;base64," + base64.StdEncoding.EncodeToString(buf.Bytes())
+
+		return imgSrc, nil
+	case "image/png":
+		err = png.Encode(&buf, img)
+		if err != nil {
+			log.Println(err)
+		}
+
+		imgSrc := "data:image/png;base64," + base64.StdEncoding.EncodeToString(buf.Bytes())
+
+		return imgSrc, nil
+	default:
+		log.Printf("Invalid data type of photo")
+		return "", nil
+	}
+
 }
 
 func (s *Service) AddPhoto(ctx context.Context, userID string, imgByte []byte) error {

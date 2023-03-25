@@ -53,7 +53,16 @@ func (h *handler) Register(router *httprouter.Router) {
 	router.POST(logout, h.logoutHandler)
 	router.PUT(edit, h.EditHandler)
 	router.POST(saveName, h.SaveNameHandler)
-	router.POST(SaveImage, h.ImageHandler)
+	router.POST(SaveImage, h.ImageSaveHandler)
+}
+
+func getUserID(r *http.Request) string {
+	cookieUserID, err := r.Cookie("id")
+	if err != nil {
+		log.Fatalf("failed to get cookie %v", err)
+		return ""
+	}
+	return cookieUserID.Value
 }
 
 func (h *handler) GetTask(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -70,15 +79,11 @@ func (h *handler) GetTask(w http.ResponseWriter, r *http.Request, p httprouter.P
 		log.Fatalf("failed to get cookie %v", err)
 		return
 	}
-	cookieUserID, err := r.Cookie("id")
-	if err != nil {
-		log.Fatalf("failed to get cookie %v", err)
-		return
-	}
-	cookieID := cookieUserID.Value
 	cookieUsername := cookieUN.Value
 
-	nameAccount, err := h.service.GetName(r.Context(), cookieID)
+	userID := getUserID(r)
+
+	nameAccount, err := h.service.GetName(r.Context(), userID)
 	if err != nil {
 		log.Fatalf("failed to get name %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -89,7 +94,7 @@ func (h *handler) GetTask(w http.ResponseWriter, r *http.Request, p httprouter.P
 		Name string
 	}
 
-	id, name, description, err := h.service.GetTasks(r.Context(), cookieID)
+	id, name, description, err := h.service.GetTasks(r.Context(), userID)
 	if name != nil || description != nil {
 		if err != nil {
 			log.Printf("failed with get task in handler %v", err)
@@ -115,9 +120,22 @@ func (h *handler) GetTask(w http.ResponseWriter, r *http.Request, p httprouter.P
 			Name: nameAccount,
 		}
 
+		imgSrc, err := h.service.GetPhoto(r.Context(), userID)
+		if err != nil {
+			log.Printf("failed to get photo ERROR: %v", err)
+		}
+		img := template.URL(imgSrc)
+
+		dataImg := struct {
+			ImageSrc interface{}
+		}{
+			img,
+		}
+
 		err = tmpl.Execute(w, map[string]interface{}{
 			"withFields":         data,
 			"inforamtionAccount": dataName,
+			"image":              dataImg,
 		})
 		if err != nil {
 			log.Fatalf("COULD NOT EXECUTE %v", err)
@@ -137,16 +155,28 @@ func (h *handler) GetTask(w http.ResponseWriter, r *http.Request, p httprouter.P
 		dataName := InfoAccount{
 			Name: nameAccount,
 		}
+		imgSrc, err := h.service.GetPhoto(r.Context(), userID)
+		if err != nil {
+			log.Printf("failed to get photo ERROR: %v", err)
+		}
+		img := template.URL(imgSrc)
+		dataImg := struct {
+			ImageSrc interface{}
+		}{
+			img,
+		}
 
 		err = tmpl.Execute(w, map[string]interface{}{
 			"withFields":         data,
 			"inforamtionAccount": dataName,
+			"image":              dataImg,
 		})
 		if err != nil {
 			log.Fatalf("COULD NOT EXECUTE %v", err)
 			http.Error(w, err.Error(), 400)
 			return
 		}
+
 	}
 
 }
@@ -167,15 +197,10 @@ func (h *handler) AddTask(w http.ResponseWriter, r *http.Request, p httprouter.P
 		return
 	}
 
-	cookieUserID, err := r.Cookie("id")
-	if err != nil {
-		log.Fatalf("failed to get cookie %v", err)
-		return
-	}
-	cookieID := cookieUserID.Value
+	userID := getUserID(r)
 
 	task := &entity.Task{
-		AccountId:       cookieID,
+		AccountId:       userID,
 		NameTask:        descriptionName,
 		DescriptionTask: description,
 	}
@@ -219,14 +244,8 @@ func (h *handler) logoutHandler(w http.ResponseWriter, r *http.Request, p httpro
 
 	log.Println("Handling logoutHandler request")
 
-	cookieUserID, err := r.Cookie("id")
-	if err != nil {
-		log.Fatalf("failed to get cookie %v", err)
-		return
-	}
-	cookieID := cookieUserID.Value
-
-	err = h.service.Leave(r.Context(), cookieID)
+	userID := getUserID(r)
+	err := h.service.Leave(r.Context(), userID)
 	if err != nil {
 		log.Fatalf("failed to set null to jwt token %v", err)
 		return
@@ -307,13 +326,7 @@ func (h *handler) SaveNameHandler(w http.ResponseWriter, r *http.Request, p http
 		return
 	} else {
 
-		cookieUserID, err := r.Cookie("id")
-		if err != nil {
-			log.Fatalf("failed to get cookie %v", err)
-			return
-		}
-		userID := cookieUserID.Value
-
+		userID := getUserID(r)
 		err = h.service.SaveName(r.Context(), userID, data.Value)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -322,8 +335,8 @@ func (h *handler) SaveNameHandler(w http.ResponseWriter, r *http.Request, p http
 	}
 }
 
-func (h *handler) ImageHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	log.Println("Handling ImageHandler request")
+func (h *handler) ImageSaveHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	log.Println("Handling ImageSaveHandler request")
 
 	err := r.ParseMultipartForm(32 << 20) // максимальный размер 32MB
 	if err != nil {
@@ -344,19 +357,39 @@ func (h *handler) ImageHandler(w http.ResponseWriter, r *http.Request, p httprou
 		return
 	}
 
-	cookieUserID, err := r.Cookie("id")
-	if err != nil {
-		log.Fatalf("failed to get cookie %v", err)
-		return
-	}
-	userID := cookieUserID.Value
-
+	userID := getUserID(r)
 	err = h.service.AddPhoto(r.Context(), userID, imgBytes)
 	if err != nil {
 		log.Println("failed to add photo %v", err)
 		return
 	}
 
-	fmt.Println(imgBytes)
+}
 
+//ImageLoadingHandler
+func (h *handler) ImageLoadingHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+
+	path := filepath.Join("public", "index2.html")
+	tmpl, _ := template.ParseFiles(path)
+
+	userID := getUserID(r)
+	imgSrc, err := h.service.GetPhoto(r.Context(), userID)
+	if err != nil {
+		log.Printf("failed to get photo ERROR: %v", err)
+	}
+
+	data := struct {
+		ImageSrc string
+	}{
+		imgSrc,
+	}
+
+	err = tmpl.Execute(w, map[string]interface{}{
+		"image": data,
+	})
+	if err != nil {
+		log.Fatalf("COULD NOT EXECUTE %v", err)
+		http.Error(w, err.Error(), 400)
+		return
+	}
 }

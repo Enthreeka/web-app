@@ -16,4 +16,5 @@ type Service interface {
 	GetTask(ctx context.Context, id int) (string, string, error)
 	GetName(ctx context.Context, userID string) (string, error)
 	AddPhoto(ctx context.Context, userID string, imgByte []byte) error
+	GetPhoto(ctx context.Context, userID string) ([]byte, error)
 }

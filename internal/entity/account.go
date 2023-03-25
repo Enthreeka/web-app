@@ -5,7 +5,7 @@ type Account struct {
 	UserId          string `json:"user_id"`
 	Name            string `json:"name"`
 	Email           string `json:"email"`
-	Photo           string `json:"photo"`
+	Photo           []byte `json:"photo"`
 	Subscribe       bool   `json:"subscribe"`
 	NameTask        string `json:"name_task"`
 	DescriptionTask string `json:"description_task"`

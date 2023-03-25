@@ -70,7 +70,7 @@
             </svg>
         </button>
         <div class="header__right__user__popup__top">
-            <img src="/public/images/user-default.svg" alt="user-icon" class="header__right__user__popup__icon" width="50" height="50">
+            <img src="{{.image.ImageSrc}}" alt="user-icon" class="header__right__user__popup__icon" width="50" height="50">
 
             <h2 class="header__right__user__popup__top__heading">{{.withFields.Username}}</h2>
 
@@ -158,7 +158,8 @@
                     <div class="header__right__user__settings__popup__content__right__account__photo">
                         <p class="header__right__user__settings__popup__content__right__account__photo__paragraph">Фото</p>
                         <div class="header__right__user__settings__popup__content__right__account__photo__lower">
-                            <img src="/public/images/user-default.svg" alt="user-avatar" width="50" height="50">
+                            <img src="{{.image.ImageSrc }}" alt="user-avatar" width="50" height="50">
+<!--                            <img src="/public/images/user-default.svg" alt="user-avatar" width="50" height="50">-->
 <!--                            <button class="header__right__user__settings__popup__content__right__account__photo__lower__button">Загрузить фото</button>-->
                             <form action="/dashboard/image" method="post">
                             <input class="load-image-file" type="file" id="file-input" name="file">
@@ -248,7 +249,7 @@
                             </button>
                             <p class="header__right__user__settings__popup__content__right__themes__theme__paragraph">Стандартная</p>
                         </div>
-                        <div class="header__right__user__settings__popup__content__right__themes__theme green__theme active">
+                        <div class="header__right__user__settings__popup__content__right__themes__theme green__theme ">
                             <button class="header__right__user__settings__popup__content__right__themes__theme__button green__btn">
                                 <img src="/public/images/page-2/theme-2.svg" alt="theme-2" width="150" height="50">
                             </button>

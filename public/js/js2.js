@@ -413,7 +413,7 @@ let addingChartData = function () {
 }
 
 let deleteTaskHandler = (item) => {
-  let taskListCloseButton = item.querySelector('.main__view__content__list__item__button__done'); 
+  let taskListCloseButton = item.querySelector('.main__view__content__list__item__button__done');
   
     taskListCloseButton.addEventListener('click', () => {
       item.remove()

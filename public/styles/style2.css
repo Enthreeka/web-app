@@ -467,7 +467,6 @@ body {
   height: 60px;
   background-color: rgb(211, 208, 208);
   border: 1px solid rgb(211, 208, 208);
-  padding-top: 10px;
   border-radius: 50%;
 }
 @media (max-width: 500px) {
@@ -1102,7 +1101,7 @@ body {
   height: 80px;
   background-color: rgb(230, 230, 230);
   border-radius: 50%;
-  padding-top: 10px;
+
   border: 1px solid rgb(230, 230, 230);
 }
 @media (max-width: 510px) {

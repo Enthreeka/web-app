@@ -20,6 +20,29 @@ func NewAccountRepository(db *pgxpool.Pool) account.Repository {
 	return &accountRepository{db: db}
 }
 
+var (
+	task entity.Task
+	acc  entity.Account
+)
+
+func (r *accountRepository) GetByneriPhoto(ctx context.Context, userID string) ([]byte, error) {
+	query := `SELECT photo
+					FROM account	
+						WHERE user_id = $1`
+
+	err := r.db.QueryRow(ctx, query, userID).Scan(&acc.Photo)
+	if err != nil {
+		pgErr, ok := err.(*pgconn.PgError)
+		if ok {
+			newErr := fmt.Errorf("SQL Error: %s, Detail: %s, Where: %s", pgErr.Error(), pgErr.Detail, pgErr.Where)
+			fmt.Println(newErr)
+			return nil, newErr
+		}
+		return nil, err
+	}
+	return acc.Photo, nil
+}
+
 func (r *accountRepository) AddByneriPhoto(ctx context.Context, userID string, imgByte []byte) error {
 	query := `UPDATE account
 				SET photo = $1
@@ -33,14 +56,11 @@ func (r *accountRepository) AddByneriPhoto(ctx context.Context, userID string, i
 }
 
 func (r *accountRepository) GetName(ctx context.Context, userID string) (string, error) {
-
 	query := `SELECT name 	
 		          FROM account 
                   WHERE user_id = $1`
 
-	var account entity.Account
-
-	err := r.db.QueryRow(ctx, query, userID).Scan(&account.Name)
+	err := r.db.QueryRow(ctx, query, userID).Scan(&acc.Name)
 	if err != nil {
 		pgErr, ok := err.(*pgconn.PgError)
 		if ok {
@@ -50,7 +70,7 @@ func (r *accountRepository) GetName(ctx context.Context, userID string) (string,
 		}
 		return "", err
 	}
-	return account.Name, nil
+	return acc.Name, nil
 }
 
 func (r *accountRepository) UpdateNameUser(ctx context.Context, userID string, name string) error {
@@ -71,8 +91,6 @@ func (r *accountRepository) GetTask(ctx context.Context, id int) (string, string
 		          FROM tasks 
                   WHERE id = $1`
 
-	var task entity.Task
-
 	err := r.db.QueryRow(ctx, query, id).Scan(&task.NameTask, &task.DescriptionTask)
 	if err != nil {
 		pgErr, ok := err.(*pgconn.PgError)
@@ -87,11 +105,9 @@ func (r *accountRepository) GetTask(ctx context.Context, id int) (string, string
 }
 
 func (r *accountRepository) UpdateTask(ctx context.Context, id string) error {
-
 	query := `UPDATE tasks
 		SET name_task = $1 
 			WHERE id = $2`
-	var task entity.Task
 
 	_, err := r.db.Exec(ctx, query, task.NameTask, id)
 	if err != nil {
@@ -116,8 +132,6 @@ func (r *accountRepository) SetNullToken(ctx context.Context, userID string) err
 }
 
 func (r *accountRepository) DeleteTask(ctx context.Context, taskID int) error {
-	var task entity.Task
-
 	query := `DELETE FROM tasks
 	            where 
 				id= $1`
@@ -157,7 +171,6 @@ func (r *accountRepository) CreateTask(ctx context.Context, task *entity.Task) (
 }
 
 func (r *accountRepository) UpdateName(ctx context.Context, account *entity.Account, id int) error {
-
 	query := `UPDATE account
 				SET name = $1
 				WHERE id = $2
@@ -196,7 +209,6 @@ func (r *accountRepository) UpdateNameTask(ctx context.Context, nameTask string,
 }
 
 func (r *accountRepository) GetTasks(ctx context.Context, userID string) ([]string, []string, []string, error) {
-
 	query := `SELECT id ,name_task , description_task
 					FROM tasks
 				WHERE user_id = $1`
