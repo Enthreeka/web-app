@@ -413,7 +413,7 @@ let addingChartData = function () {
 }
 
 let deleteTaskHandler = (item) => {
-  let taskListCloseButton = item.querySelector('.main__view__content__list__item__button__done'); 
+  let taskListCloseButton = item.querySelector('.main__view__content__list__item__button__done');
   
     taskListCloseButton.addEventListener('click', () => {
       item.remove()
@@ -1044,6 +1044,7 @@ const myChart = new Chart(ctx, {
     }
   });
 
+
 // <----------------------------- TIPS ------------------------------->
 
 const productivityTipButton = document.querySelector('.productivity-tip__close-button');
@@ -1106,21 +1107,77 @@ async function formDel(e,form) { //сама функция
         });
 }
 
+const imageLoad = document.querySelector(".load-image-file")
+
+imageLoad.addEventListener('input', function(e){
+let form = imageLoad.closest("form")
+            formImage(form)
+})
+
+
+
+async function formImage(form) { //сама функция
+    let formData = new FormData(form)
+    console.log(form)
+
+      form.classList.add('_sending');
+        let response = await fetch('/dashboard/image' ,{
+            method: 'POST',
+            body: formData, // тут по идеи должны быть инпуты
+        });
+}
+
+ const saveBtn = document.querySelector('.save-name');
+
+  saveBtn.addEventListener('click', function() {
+    let from = saveBtn.closest('form')
+    let input = from.querySelector('input')
+    const value = input.value;
+
+        console.log(value)
+        fetch('/dashboard/update/name', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({value})
+        });
+
+  });
+
 const leveaBtn = document.querySelector(".header__right__user__popup__list__item__sign-out__link")
 
 leveaBtn.onclick = function(e){
 let form = leveaBtn.closest("form")
 console.log(form)
 formLeave(form)
-
 }
+
 
 async function formLeave(form) { //сама функция
     let formData = new FormData(form)
     console.log(form)
       form.classList.add('_sending');
         let response = await fetch('/dashboard/leave' ,{
-            method: 'PATCH',
+            method: 'POST',
+            body: formData, // тут по идеи должны быть инпуты
+        });
+}
+
+const editBtn = document.querySelector(".main__view__content__form__edit__button")
+
+editBtn.onclick = function(e){
+let form = editBtn.closest("form")
+console.log(form)
+formEdit(form)
+}
+
+async function formEdit(form) { //сама функция
+    let formData = new FormData(form)
+    console.log(form)
+      form.classList.add('_sending');
+        let response = await fetch('/dashboard/edit' ,{
+            method: 'PUT',
             body: formData, // тут по идеи должны быть инпуты
         });
 }

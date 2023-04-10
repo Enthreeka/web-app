@@ -23,17 +23,6 @@ func NewUserService(repository user.Repository) *Service {
 	}
 }
 
-func (s *Service) Leave(ctx context.Context, userID string) error {
-
-	err := s.repository.SetNullToken(ctx, userID)
-	if err != nil {
-		log.Fatalf("failed to set null in service %v", err)
-		return err
-	}
-
-	return nil
-}
-
 func (s *Service) SignUp(ctx context.Context, user *entity.User) (*entity.User, error) {
 	hasedBytes := string(HashPassword(user.Login, user.Password))
 	user.Password = hasedBytes
@@ -91,7 +80,7 @@ func (s *Service) LogIn(ctx context.Context, login string, password string) (ent
 func (s *Service) GenerateToken(ctx context.Context, userID string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": userID,
-		"exp": time.Now().Add(time.Hour * 24).Unix(),
+		"exp": time.Now().Add(time.Hour * 1).Unix(),
 	})
 
 	tokenString, err := token.SignedString([]byte("secret-token-gen"))
@@ -110,6 +99,7 @@ func (s *Service) GenerateToken(ctx context.Context, userID string) (string, err
 		log.Fatalf("failed to store token: %v", err)
 		return "", fmt.Errorf("failed to store token: %v", err)
 	}
+
 	return tokenString, nil
 }
 
@@ -127,7 +117,7 @@ func sha256Hash(login, password string) []byte {
 	return hashedSha256Password
 }
 
-//TODO salt and iterations
+// TODO salt and iterations
 func HashPassword(login, password string) []byte {
 	hashedSha256Password := sha256Hash(login, password)
 

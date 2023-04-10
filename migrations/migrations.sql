@@ -52,4 +52,3 @@ create table tasks
 --         foreign key (user_id)
 --             references users (id)
 -- );
-

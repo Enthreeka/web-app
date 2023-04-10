@@ -29,7 +29,6 @@ const (
 	login     = "/login"
 	signup    = "/signup"
 	dashboard = "/dashboard"
-	leave     = "/dashboard/leave"
 )
 
 func NewHandler(service *usecase.Service, user *entity.User) handlers.Handler {
@@ -43,45 +42,25 @@ func (h *handler) Register(router *httprouter.Router) {
 
 	router.ServeFiles("/public/*filepath", http.Dir("public"))
 
-	router.GET(startPage, h.StartPage)
-	router.POST(login, h.Login)
-	router.POST(signup, h.SignUp)
-	router.PATCH(leave, h.LeaveFromAccount)
+	router.GET(startPage, h.StartPageHandler)
+	router.POST(login, h.LoginPageHandler)
+	router.POST(signup, h.SignUpPageHandler)
 
 	//router.GET(dashboard, apperror.AuthMiddleware(h.AccountPage))
 }
 
-func (h *handler) LeaveFromAccount(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	log.Println("Handling LeaveFromAccount request")
-
-	cookieUserID, err := r.Cookie("id")
-	if err != nil {
-		log.Fatalf("failed to get cookie %v", err)
-		return
-	}
-	cookieID := cookieUserID.Value
-
-	err = h.service.Leave(r.Context(), cookieID)
-	if err != nil {
-		log.Fatalf("failed to set null to jwt token %v", err)
-		return
-	}
-	http.Redirect(w, r, startPage, http.StatusSeeOther)
-
-}
-
-func (h *handler) SignUp(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (h *handler) SignUpPageHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	if r.Method == "POST" {
 		login := r.FormValue("login")
 		if !validation.IsValidationLogin(login) {
 			fmt.Println("login did not meet the requirements")
-			http.Redirect(w, r, "/", http.StatusSeeOther)
+			http.Redirect(w, r, startPage, http.StatusSeeOther)
 			return
 		}
 		password := r.FormValue("password")
 		if !validation.IsValidationPassword(password) {
 			fmt.Println("password did not meet the requirements")
-			http.Redirect(w, r, "/", http.StatusSeeOther)
+			http.Redirect(w, r, startPage, http.StatusSeeOther)
 			return
 		}
 
@@ -92,7 +71,7 @@ func (h *handler) SignUp(w http.ResponseWriter, r *http.Request, p httprouter.Pa
 
 		dataUser, err := h.service.SignUp(r.Context(), user)
 		if err != nil {
-			log.Printf("failed to get method SignUp error:%v", err)
+			log.Printf("failed to get method SignUpPageHandler error:%v", err)
 		}
 
 		http.SetCookie(w, &http.Cookie{
@@ -100,9 +79,6 @@ func (h *handler) SignUp(w http.ResponseWriter, r *http.Request, p httprouter.Pa
 			Value: dataUser.Login,
 		})
 
-		//q := url.Values{}
-		//q.Add("id", dataUser.Id)
-		//url := fmt.Sprintf("/dashboard?%s", q.Encode())
 		http.SetCookie(w, &http.Cookie{
 			Name:  "id",
 			Value: dataUser.Id,
@@ -112,14 +88,14 @@ func (h *handler) SignUp(w http.ResponseWriter, r *http.Request, p httprouter.Pa
 	}
 
 }
-func (h *handler) Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (h *handler) LoginPageHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	if r.Method == "POST" {
 		login := r.FormValue("login")
 		password := r.FormValue("password")
 
 		users, err := h.service.LogIn(r.Context(), login, password)
 		if err != nil {
-			http.Redirect(w, r, "/", http.StatusSeeOther)
+			http.Redirect(w, r, startPage, http.StatusSeeOther)
 		}
 
 		h.user.Login = login
@@ -131,7 +107,7 @@ func (h *handler) Login(w http.ResponseWriter, r *http.Request, p httprouter.Par
 		http.SetCookie(w, &http.Cookie{
 			Name:     "jwt",
 			Value:    userToken,
-			Expires:  time.Now().Add(time.Hour * 24),
+			Expires:  time.Now().Add(time.Hour * 1),
 			HttpOnly: true,
 			SameSite: http.SameSiteStrictMode,
 		})
@@ -142,10 +118,6 @@ func (h *handler) Login(w http.ResponseWriter, r *http.Request, p httprouter.Par
 			Value: users.Login,
 		})
 
-		//Set the user_id in cookie
-		//q := url.Values{}
-		//q.Add("id", users.Id)
-		//url := fmt.Sprintf("/dashboard?%s", q.Encode())
 		http.SetCookie(w, &http.Cookie{
 			Name:  "id",
 			Value: users.Id,
@@ -154,7 +126,7 @@ func (h *handler) Login(w http.ResponseWriter, r *http.Request, p httprouter.Par
 		http.Redirect(w, r, dashboard, http.StatusSeeOther)
 	}
 }
-func (h *handler) StartPage(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (h *handler) StartPageHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	path := filepath.Join("public", "index.html")
 	tmpl, err := template.ParseFiles(path)
 	if err != nil {
@@ -193,7 +165,6 @@ func (h *handler) AccountPage(w http.ResponseWriter, r *http.Request, p httprout
 	}
 
 	http.Redirect(w, r, "/dashboard/add", http.StatusSeeOther)
-
 }
 
 func (h *handler) GetUsers(w http.ResponseWriter, r *http.Request) error {

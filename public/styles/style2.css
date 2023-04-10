@@ -467,7 +467,6 @@ body {
   height: 60px;
   background-color: rgb(211, 208, 208);
   border: 1px solid rgb(211, 208, 208);
-  padding-top: 10px;
   border-radius: 50%;
 }
 @media (max-width: 500px) {
@@ -1102,7 +1101,7 @@ body {
   height: 80px;
   background-color: rgb(230, 230, 230);
   border-radius: 50%;
-  padding-top: 10px;
+
   border: 1px solid rgb(230, 230, 230);
 }
 @media (max-width: 510px) {
@@ -1741,3 +1740,24 @@ body {
     background-color: rgb(173, 51, 51);
   }
 }/*# sourceMappingURL=style2.css.map */
+.header__right__user__popup__list__item__sign-out__link {
+  background: none;
+  border: none;
+  text-align: start;
+  padding: 1px 0 0 0;
+  font-family: "Montserrat", sans-serif;
+}
+.save-name {
+  background-color: rgb(173, 51, 51);
+  color: #fff;
+  border: none;
+  font-family: "Montserrat", sans-serif;
+  border-radius: 4px;
+  padding: 7px 13px;
+  margin-left: 12px;
+  transition: .2s;
+  cursor: pointer;
+}
+.save-name:hover {
+  background-color: rgba(173, 51, 51, 0.8);
+}
