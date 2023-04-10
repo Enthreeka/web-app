@@ -5,5 +5,4 @@ type User struct {
 	Login    string `json:"login"`
 	Password string `json:"password"`
 	Token    string `json:"token"`
-	//Account  *Account `json:"account"`
 }

@@ -22,10 +22,6 @@ func NewAccountService(repository account.Repository) *Service {
 		repository: repository,
 	}
 }
-func detectPhotoFormat(b []byte) (string, error) {
-	contentType := http.DetectContentType(b)
-	return contentType, nil
-}
 
 func (s *Service) GetPhoto(ctx context.Context, userID string) (string, error) {
 
@@ -177,4 +173,9 @@ func (s *Service) GetTasks(ctx context.Context, userID string) ([]string, []stri
 	}
 
 	return id, name, description, err
+}
+
+func detectPhotoFormat(b []byte) (string, error) {
+	contentType := http.DetectContentType(b)
+	return contentType, nil
 }

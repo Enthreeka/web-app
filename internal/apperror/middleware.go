@@ -1,17 +1,12 @@
 package apperror
 
 import (
-	"errors"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/julienschmidt/httprouter"
 	"log"
 	"net/http"
 	"time"
 )
-
-type appHandler func(w http.ResponseWriter, r *http.Request) error
-
-//type appHandl func(w http.ResponseWriter, r *http.Request, p httprouter.Params)
 
 func AuthMiddleware(next httprouter.Handle) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -59,32 +54,5 @@ func isValidToken(token string) bool {
 	} else {
 		log.Printf("jwt token not valid")
 		return false
-	}
-}
-
-func Middleware(h appHandler) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var appErr *AppError
-		err := h(w, r)
-		if err != nil {
-			if errors.As(err, &appErr) {
-				if errors.Is(err, ErrNotFound) {
-					w.WriteHeader(http.StatusNotFound)
-					w.Write(ErrNotFound.Marshal())
-					return
-				} else if errors.Is(err, NoAuthErr) {
-					w.WriteHeader(http.StatusUnauthorized)
-					w.Write(ErrNotFound.Marshal())
-					return
-				}
-
-				err = err.(*AppError)
-				w.WriteHeader(http.StatusBadRequest)
-				w.Write(ErrNotFound.Marshal())
-			}
-
-			w.WriteHeader(http.StatusTeapot) //418
-			w.Write(systemError(err).Marshal())
-		}
 	}
 }

@@ -94,7 +94,6 @@ func (s *Service) GenerateToken(ctx context.Context, userID string) (string, err
 		log.Fatalf("failed to create UUID %v ", err)
 	}
 
-	//CreateUser token and implement in database
 	if err := s.repository.UpdateToken(ctx, tokenID.String(), userID); err != nil {
 		log.Fatalf("failed to store token: %v", err)
 		return "", fmt.Errorf("failed to store token: %v", err)

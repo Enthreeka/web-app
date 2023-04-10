@@ -1,7 +1,6 @@
 package http
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"html/template"
@@ -45,8 +44,6 @@ func (h *handler) Register(router *httprouter.Router) {
 	router.GET(startPage, h.StartPageHandler)
 	router.POST(login, h.LoginPageHandler)
 	router.POST(signup, h.SignUpPageHandler)
-
-	//router.GET(dashboard, apperror.AuthMiddleware(h.AccountPage))
 }
 
 func (h *handler) SignUpPageHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -140,48 +137,4 @@ func (h *handler) StartPageHandler(w http.ResponseWriter, r *http.Request, p htt
 		return
 	}
 
-}
-func (h *handler) AccountPage(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	path := filepath.Join("public", "index2.html")
-	tmpl, err := template.ParseFiles(path)
-	if err != nil {
-		http.Error(w, err.Error(), 400)
-		return
-	}
-
-	data := AccountPageData{
-		User: h.user,
-	}
-
-	http.SetCookie(w, &http.Cookie{
-		Name:  "username",
-		Value: data.User.Login,
-	})
-
-	err = tmpl.Execute(w, data)
-	if err != nil {
-		http.Error(w, err.Error(), 400)
-		return
-	}
-
-	http.Redirect(w, r, "/dashboard/add", http.StatusSeeOther)
-}
-
-func (h *handler) GetUsers(w http.ResponseWriter, r *http.Request) error {
-	w.Header().Set("Content-Type", "application/json")
-	all, err := h.service.GetAll(r.Context())
-
-	if err != nil {
-		w.WriteHeader(400)
-		return nil
-	}
-
-	allBytes, err := json.MarshalIndent(all, "", "")
-	if err != nil {
-		fmt.Printf("Error : %v", err)
-	}
-
-	w.WriteHeader(200)
-	w.Write(allBytes)
-	return nil
 }
